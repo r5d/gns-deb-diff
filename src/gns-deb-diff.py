@@ -106,7 +106,6 @@ def read_gns_readme(package):
                                                               package),
                            'r')
     except IOError, e:
-        print "Trouble opening %s/%s"  % (local_dir, package)
         print e
         return None # give up!
 
@@ -135,6 +134,48 @@ def slurp_readmes(package_list):
 
     return pkg_readmes, noreadme_pkgs
 
-pkgs_list = get_paraphernalia()
-deploy_packages_locally(pkgs_list)
-pkg_readmes, noreadme_pkgs = slurp_readmes(pkgs_list)
+
+def generate_diff_table(pkg_readmes):
+    """Generates the gNewSense Debian Diff table in MoinMoin syntax and \
+returns it as a string.
+    """
+
+    table = [
+        "||Package||Difference||",
+        ]
+
+    for pkg, diff in pkg_readmes.items():
+        row = "||%s||%s||" % (pkg, diff)
+        table.append(row)
+
+    return table
+
+
+def write_diff_table(table, filepath):
+    """Write the table to file."""
+
+    try:
+        table_file = open(filepath, 'w')
+
+        for row in table:
+            table_file.write("%s\n" % row)
+
+    except IOError, e:
+        print "Something went wrong: %r" % e
+    finally:
+        table_file.close()
+
+
+def do_magic():
+    """
+    Does what it has to do :)
+    """
+    pkgs_list = get_paraphernalia()
+    deploy_packages_locally(pkgs_list)
+    pkg_readmes, noreadme_pkgs = slurp_readmes(pkgs_list)
+    diff_table = generate_diff_table(pkg_readmes)
+    write_diff_table(diff_table, "gns-deb-diff-table.txt")
+
+    print "README.gNewSense not found for: %s" % noreadme_pkgs
+
+do_magic()
