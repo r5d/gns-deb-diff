@@ -9,12 +9,13 @@ import subprocess as child
 import shlex
 import os.path as path
 import os
-from sys import exit
+from sys import exit, argv
 
 # global variables.
-bzr_base_url = ""
-local_dir = ""
-pkgs_file = ""
+bzr_base_url = None
+local_dir = None
+pkgs_file = None
+table_file = None
 
 def get_packages_list():
     """
@@ -74,47 +75,48 @@ def get_packages(packages_list):
 
         assert code == 0, "bzr branch mirroring for %s FAILED" % pkg
 
-def get_paraphernalia():
+def process_input():
     """
-    Read relevant values from stdin to start work.
+    Read relevant values from argv to start work.
     """
-    global bzr_base_url, local_dir, pkgs_file
+    global bzr_base_url, local_dir, pkgs_file, table_file
 
-    stdin = raw_input(">> remote bzr url: ").strip()
+    # defaults
+    remote_bzr_url = "bzr://bzr.savannah.gnu.org/gnewsense/packages-parkes"
+    local_packages_directory = "~/gnewsense/packages-parkes"
 
-    if (len(stdin) != 0):
-        bzr_base_url = stdin
+    try:
+        pkgs_file = argv[1]
+        table_file = argv[2]
+    except IndexError:
+        print "format: python path/to/gns-deb-diff.py \
+packages-list-file output-table-file local-packages-directory \
+remote-bzr-url\n\n`local-packages-directory' & 'remote-bzr-url' are \
+optional\ndefault values:\n\tlocal-packages-directory: %s\n\t\
+remote-bzr-url: %s" % (remote_bzr_url, local_packages_directory)
+        exit(1)
+
+
+    # check if the local-packages-directory is given
+    if (len(argv) > 3):
+        local_dir = path.abspath(argv[3])
     else:
-        bzr_base_url = "bzr://bzr.savannah.gnu.org/gnewsense/packages-parkes"
-
-    # directory under which the bzr branches has to be stored.
-    stdin =  raw_input(">> local directory to store bzr branches: ").strip()
-
-    if (len(stdin) !=0):
-        local_dir = path.abspath(stdin)
-    else:
-        local_dir = path.expanduser("~/gnewsense/packages-parkes")
+        # stick with default directory
+        local_dir = path.expanduser(local_packages_directory)
 
     if not path.isdir(local_dir):
         try:
             os.makedirs(local_dir)
-        except OSError, e:
+        except OSError:
             print "ERROR: Unable to create %s directory" % local_dir
             exit(1)
 
-
-    # packages list file should contain package names listed one per
-    # line.
-    stdin = raw_input(">> packages list file: ").strip()
-
-    if (len(stdin) != 0):
-        pkgs_file = path.abspath(stdin)
+    # check if remote_bzr_url is given
+    if (len(argv) > 4):
+        bzr_base_url = argv[4]
     else:
-        pkgs_file = path.abspath("packages-parkes.list")
-
-    packages_list = get_packages_list()
-
-    return packages_list
+        # stick with default url
+        bzr_base_url = remote_bzr_url
 
 
 def read_gns_readme(package):
@@ -186,30 +188,38 @@ returns it as a string.
     return table
 
 
-def write_diff_table(table, filepath):
-    """Write the table to file."""
+def write_diff_table(table):
+    """Write the table to file.
+
+    The filename is read from stdin
+    """
+    global table_file
 
     try:
-        table_file = open(filepath, 'w')
+        output_file = open(table_file, 'w')
 
         for row in table:
-            table_file.write("%s\n" % row)
+            output_file.write("%s\n" % row)
 
     except IOError, e:
         print "Something went wrong: %r" % e
     finally:
-        table_file.close()
+        output_file.close()
 
 
 def do_magic():
     """
     Does what it has to do :)
     """
-    pkgs_list = get_paraphernalia()
+
+    global table_file
+
+    process_input()
+    pkgs_list = get_packages_list()
     get_packages(pkgs_list)
     pkg_readmes, noreadme_pkgs = slurp_readmes(pkgs_list)
     diff_table = generate_diff_table(pkg_readmes)
-    write_diff_table(diff_table, "gns-deb-diff-table.txt")
+    write_diff_table(diff_table)
 
     print "README.gNewSense not found for: %s" % noreadme_pkgs
 
