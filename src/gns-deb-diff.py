@@ -20,7 +20,7 @@ def get_packages():
     global pkgs_file
 
     try:
-        packages_file = file(pkgs_file, 'r')
+        packages_file = open(pkgs_file, 'r')
     except IOError, e:
         print "Trouble opening %r" % pkgs_file
         print e
