@@ -68,7 +68,7 @@ def get_paraphernalia():
     """
     global bzr_base_url, local_dir, pkgs_file
 
-    stdin = raw_input("> url of packages location: ").strip()
+    stdin = raw_input(">> remote bzr url: ").strip()
 
     if (len(stdin) != 0):
         bzr_base_url = stdin
@@ -76,11 +76,11 @@ def get_paraphernalia():
         bzr_base_url = "bzr://bzr.savannah.gnu.org/gnewsense/packages-parkes"
 
     # directory under which the bzr branches has to be stored.
-    local_dir =  raw_input("> local directory: ")
+    local_dir =  raw_input(">> local directory to store bzr branch: ").strip()
 
     # absolute path to file which contains the packages names.
     # one package per line.
-    stdin = raw_input("> packages list file (absolute path): ").strip()
+    stdin = raw_input(">> packages list file (absolute path): ").strip()
 
     if (len(stdin) != 0):
         pkgs_file = stdin
