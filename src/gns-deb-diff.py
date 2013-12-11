@@ -166,6 +166,13 @@ def slurp_readmes(package_list):
 def generate_diff_table(pkg_readmes):
     """Generates the gNewSense Debian Diff table in MoinMoin syntax and \
 returns it as a string.
+
+    The generated output is *not* clean since the content under the
+    Difference column often has newlines, which MoinMoin doesn't allow
+    inside a table.
+
+    So, you might have to manually clean the table before putting it
+    on the gNewSense Wiki.
     """
 
     table = [
