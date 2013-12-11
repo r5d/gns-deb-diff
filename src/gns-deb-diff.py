@@ -16,7 +16,7 @@ bzr_base_url = ""
 local_dir = ""
 pkgs_file = ""
 
-def get_packages():
+def get_packages_list():
     """
     Return a list of package names from pkgs_file.
     """
@@ -35,35 +35,44 @@ def get_packages():
 
     packages_file.close()
 
-    print packages
-
     return packages
 
 
-def bzr_branch_command(package):
+def mirror_bzr_branch(package):
     """
-    Return the command to create a local bzr branch of package.
+    Create/update a local bzr branch of the package from remote branch.
     """
     global bzr_base_url, local_dir
 
-    return "bzr branch %s/%s %s/%s" % (bzr_base_url, package,
-                                       local_dir, package)
+    local_pkg_dir = path.join(local_dir,package)
 
-def fetch_bzr_branch(package):
-    """
-    Create a local bzr branch of the package.
-    """
-    bzr_branch_cmd = bzr_branch_command(package)
-    print "doing %s ..." % bzr_branch_cmd
-    return child.call(shlex.split(bzr_branch_cmd))
+    if path.exists(local_pkg_dir):
+        current_dir = os.getcwd()
+        os.chdir(local_pkg_dir)
 
+        command = "bzr pull %s/%s" % (bzr_base_url,
+                                      package)
+        returncode = child.call(shlex.split(command))
 
-def deploy_packages_locally(packages_list):
+        # back to current dir
+        os.chdir(current_dir)
+    else:
+        # package doesn't exists so locally create one.
+        command = "bzr branch %s/%s %s" % (bzr_base_url, package,
+                                              local_pkg_dir)
+
+        returncode = child.call(shlex.split(command))
+
+    return returncode
+
+def get_packages(packages_list):
     """
-    Create a local bzr branch for each package in packages list.
+    Create/update a local bzr branch for each package in packages list.
     """
     for pkg in packages_list:
-        fetch_bzr_branch(pkg)
+        code = mirror_bzr_branch(pkg)
+
+        assert code == 0, "bzr branch mirroring for %s FAILED" % pkg
 
 def get_paraphernalia():
     """
@@ -135,7 +144,9 @@ def read_gns_readme(package):
 def slurp_readmes(package_list):
     """Reads the README.gNewSense for each package in package_list.
 
-    The readme content of all packages is put into a dict.
+    The README content of all packages is put into a dict. Packages
+    which doesn't have a README.gNewSense file is put in a seperate
+    list.
     """
 
     pkg_readmes = {}
@@ -188,7 +199,7 @@ def do_magic():
     Does what it has to do :)
     """
     pkgs_list = get_paraphernalia()
-    deploy_packages_locally(pkgs_list)
+    get_packages(pkgs_list)
     pkg_readmes, noreadme_pkgs = slurp_readmes(pkgs_list)
     diff_table = generate_diff_table(pkg_readmes)
     write_diff_table(diff_table, "gns-deb-diff-table.txt")
