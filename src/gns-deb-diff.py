@@ -91,5 +91,50 @@ def get_paraphernalia():
 
     return packages_list
 
+
+def read_gns_readme(package):
+    """
+    Reads & returns the README.gNewSense file for the package.
+
+    If the README.gNewSense is not present, it returns None.
+    """
+
+    global local_dir
+
+    try:
+        readme_file = open("%s/%s/debian/README.gNewSense" % (local_dir,
+                                                              package),
+                           'r')
+    except IOError, e:
+        print "Trouble opening %s/%s"  % (local_dir, package)
+        print e
+        return None # give up!
+
+    readme_content = readme_file.read().strip()
+    readme_file.close()
+
+    return readme_content
+
+
+def slurp_readmes(package_list):
+    """Reads the README.gNewSense for each package in package_list.
+
+    The readme content of all packages is put into a dict.
+    """
+
+    pkg_readmes = {}
+    noreadme_pkgs = []
+
+    for pkg in package_list:
+        readme_content = read_gns_readme(pkg)
+
+        if readme_content is not None:
+            pkg_readmes[pkg] = readme_content
+        else:
+            noreadme_pkgs.append(pkg)
+
+    return pkg_readmes, noreadme_pkgs
+
 pkgs_list = get_paraphernalia()
 deploy_packages_locally(pkgs_list)
+pkg_readmes, noreadme_pkgs = slurp_readmes(pkgs_list)
