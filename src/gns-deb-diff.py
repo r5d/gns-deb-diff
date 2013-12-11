@@ -7,6 +7,9 @@
 
 import subprocess as child
 import shlex
+import os.path as path
+import os
+from sys import exit
 
 # global variables.
 bzr_base_url = ""
@@ -76,18 +79,31 @@ def get_paraphernalia():
         bzr_base_url = "bzr://bzr.savannah.gnu.org/gnewsense/packages-parkes"
 
     # directory under which the bzr branches has to be stored.
-    local_dir =  raw_input(">> local directory to store bzr branch: ").strip()
+    stdin =  raw_input(">> local directory to store bzr branches: ").strip()
 
-    # absolute path to file which contains the packages names.
-    # one package per line.
-    stdin = raw_input(">> packages list file (absolute path): ").strip()
+    if (len(stdin) !=0):
+        local_dir = path.abspath(stdin)
+    else:
+        local_dir = path.expanduser("~/gnewsense/packages-parkes")
+
+    if not path.isdir(local_dir):
+        try:
+            os.makedirs(local_dir)
+        except OSError, e:
+            print "ERROR: Unable to create %s directory" % local_dir
+            exit(1)
+
+
+    # packages list file should contain package names listed one per
+    # line.
+    stdin = raw_input(">> packages list file: ").strip()
 
     if (len(stdin) != 0):
-        pkgs_file = stdin
+        pkgs_file = path.abspath(stdin)
     else:
-        pkgs_file = "packages-parkes.list"
+        pkgs_file = path.abspath("packages-parkes.list")
 
-    packages_list = get_packages()
+    packages_list = get_packages_list()
 
     return packages_list
 
@@ -101,10 +117,11 @@ def read_gns_readme(package):
 
     global local_dir
 
+    readme_file_path = path.join(local_dir, package,
+    "debian/README.gNewSense")
+
     try:
-        readme_file = open("%s/%s/debian/README.gNewSense" % (local_dir,
-                                                              package),
-                           'r')
+        readme_file = open(readme_file_path, 'r')
     except IOError, e:
         print e
         return None # give up!
