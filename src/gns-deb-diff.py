@@ -176,7 +176,7 @@ returns it as a string.
     """
 
     table = [
-        "||Package||Difference||",
+        "||'''Package'''||'''Difference'''||",
         ]
 
     for pkg, diff in pkg_readmes.items():
