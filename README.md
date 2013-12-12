@@ -69,7 +69,8 @@ is barfed out to stdout.
 
 ## License
 
-The script is under the WTFPL version 2 license. See COPYING for more
-details. This license is [compatible with GNU GPL][3].
+The script is under the [WTFPL version 2 license][3]. See COPYING for more
+details. This license is [compatible with GNU GPL][4].
 
-[3]: http://www.gnu.org/licenses/license-list.html#WTFPL
+[3]: http://www.wtfpl.net/txt/copying/
+[4]: http://www.gnu.org/licenses/license-list.html#WTFPL
