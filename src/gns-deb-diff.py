@@ -9,6 +9,7 @@ import subprocess as child
 import shlex
 import os.path as path
 import os
+import re
 from sys import exit, argv
 
 # global variables.
@@ -16,6 +17,12 @@ bzr_base_url = None
 local_dir = None
 pkgs_file = None
 table_file = None
+
+# list of recognized fields.
+field_list = [
+    "Change-Type",
+    "Changed-From-Debian",
+    ]
 
 def get_packages_list():
     """
@@ -142,30 +149,62 @@ def read_gns_readme(package):
 
     return readme_content
 
+def generate_tuple(package, readme_content):
+    """Generates a tuple of the diff table.
 
-def slurp_readmes(package_list):
-    """Reads the README.gNewSense for each package in package_list.
+    Keyword arguments:
+    package -- name of package
+    readme_content -- content of the README.gNewSense for this package.
 
-    The README content of all packages is put into a dict. Packages
-    which doesn't have a README.gNewSense file is put in a seperate
-    list.
     """
 
-    pkg_readmes = {}
+    global field_list
+
+    pkg_tuple = {}
+
+    pkg_tuple[package] = package
+
+    for field in field_list:
+        pattern = r"%s:\s*(.+)" % field
+        field_pattern = re.compile(pattern)
+        field_match = field_pattern.search(readme_content)
+
+        if not field_match is None:
+            field_value = field_match.group(1)
+            pkg_tuple[field] = field_value
+
+    print pkg_tuple
+
+    return pkg_tuple
+
+
+def slurp_readmes(package_list):
+    """Reads the README.gNewSense for each package in package_list \
+and generates tuples for each package.
+
+    Packages which doesn't have a README.gNewSense file is put in a
+    seperate list.
+
+    The function returns the tuple dict and a list of packages (if
+    any), that doesn't have README.gNewSense file.
+    """
+
+    pkg_tuples = []
     noreadme_pkgs = []
 
     for pkg in package_list:
         readme_content = read_gns_readme(pkg)
 
         if readme_content is not None:
-            pkg_readmes[pkg] = readme_content
+            pkg_tuple = generate_tuple(pkg, readme_content)
+            pkg_tuples.append(pkg_tuple)
         else:
             noreadme_pkgs.append(pkg)
 
-    return pkg_readmes, noreadme_pkgs
+    return pkg_tuples, noreadme_pkgs
 
 
-def generate_diff_table(pkg_readmes):
+def generate_diff_table(pkg_tuples):
     """Generates the gNewSense Debian Diff table in MoinMoin syntax and \
 returns it as a string.
 
@@ -177,12 +216,40 @@ returns it as a string.
     on the gNewSense Wiki.
     """
 
+    global field_list
+
     table = [
-        "||'''Package'''||'''Difference'''||",
+        "||'''Source Package'''||'''Change Type'''||'''Reason'''||\
+'''More Info'''||",
         ]
 
-    for pkg, diff in pkg_readmes.items():
-        row = "||%s||%s||" % (pkg, diff)
+    for pkg_tuple in pkg_tuples:
+        # get package name first:
+        pkg_name = pkg_tuple.values()[0]
+
+        more_info_link = "http://bzr.savannah.gnu.org/lh/gnewsense/\
+packages-parkes/%s/annotate/head:/debian/README.gNewSense" % pkg_name
+
+        # start constructing a row for this package:
+        row = "||%s" % pkg_name
+
+        try:
+            row += "||%s||%s" % (pkg_tuple[field_list[0]], # change type
+                                pkg_tuple[field_list[1]]) # reason
+        except KeyError:
+            # Okay. Change-Type or Changed-from-Debian field is not
+            # provided for this package. Let's do something:
+            for field in field_list:
+                if not pkg_tuple.has_key(field):
+                    # this field is not provided, so:
+                    row += "|| " # empty cell
+                else:
+                    # field not empty so fill it.
+                    row += "||%s" % pkg_tuple[field]
+
+        # added more info link in another cell
+        row += "||[[%s|more info]]||" % more_info_link
+
         table.append(row)
 
     return table
@@ -217,8 +284,8 @@ def do_magic():
     process_input()
     pkgs_list = get_packages_list()
     get_packages(pkgs_list)
-    pkg_readmes, noreadme_pkgs = slurp_readmes(pkgs_list)
-    diff_table = generate_diff_table(pkg_readmes)
+    pkg_tuples, noreadme_pkgs = slurp_readmes(pkgs_list)
+    diff_table = generate_diff_table(pkg_tuples)
     write_diff_table(diff_table)
 
     print "README.gNewSense not found for: %s" % noreadme_pkgs
