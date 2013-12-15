@@ -30,21 +30,21 @@ difference table.
 
 This is what the script does at present:
 
-+   **STEP1** The script pulls the latest version of the packages, listed
++   **S1** The script pulls the latest version of the packages, listed
     in the `packages-list-file`, from their respective bzr repos.
 
-+   **STEP2** For packages which contain the `README.gNewSense` file, a
++   **S2** For packages which contain the `README.gNewSense` file, a
     dict of the form `{'pkg': 'package_name', 'Change-Type':
     'Added/Removed/Modified', 'Changed-From-Debian': 'one line
     description'}` is generated.
 
-    The value for keys `Change-Type' & `Changed-Frome-Debian' is None,
-	if values for those are not present in the README.gNewSense.
+    The value for keys `Change-Type` & `Changed-Frome-Debian` is None,
+	if values for those are not present in the `README.gNewSense`.
 
-+   **STEP3** The script puts the names of packages, which doesn't contain
++   **S3** The script puts the names of packages, which doesn't contain
     `README.gNewSense` file, into a seperate list.
 
-+   **STEP4** The dicts produced in **STEP2** is used to generate
++   **S4** The dicts produced in **S2** is used to generate
     MoinMoin marked up table, like
     [the one found here][gns-deb-diff-notes].
 
