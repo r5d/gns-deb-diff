@@ -156,13 +156,18 @@ def generate_tuple(package, readme_content):
     package -- name of package
     readme_content -- content of the README.gNewSense for this package.
 
+
+    Returns a dict of the form {'pkg': package_name, 'Change-Type':
+    "Added/Removed/Modified", 'Changed-From-Debian': 'one line
+    description'}
+
+    The value for keys `Change-Type' & `Changed-Frome-Debian' is None,
+    if values for those are not present in the README.gNewSense.
     """
 
     global field_list
 
-    pkg_tuple = {}
-
-    pkg_tuple[package] = package
+    pkg_tuple = {"pkg": package}
 
     for field in field_list:
         pattern = r"%s:\s*(.+)" % field
@@ -172,8 +177,9 @@ def generate_tuple(package, readme_content):
         if not field_match is None:
             field_value = field_match.group(1)
             pkg_tuple[field] = field_value
-
-    print pkg_tuple
+        else:
+            # This field is not present in the README, so:
+            pkg_tuple[field] = None
 
     return pkg_tuple
 
@@ -189,7 +195,7 @@ and generates tuples for each package.
     any), that doesn't have README.gNewSense file.
     """
 
-    pkg_tuples = []
+    pkg_tuples = [] # will hold a list of dicts
     noreadme_pkgs = []
 
     for pkg in package_list:
@@ -208,12 +214,6 @@ def generate_diff_table(pkg_tuples):
     """Generates the gNewSense Debian Diff table in MoinMoin syntax and \
 returns it as a string.
 
-    The generated output is *not* clean since the content under the
-    Difference column often has newlines, which MoinMoin doesn't allow
-    inside a table.
-
-    So, you might have to manually clean the table before putting it
-    on the gNewSense Wiki.
     """
 
     global field_list
@@ -225,7 +225,7 @@ returns it as a string.
 
     for pkg_tuple in pkg_tuples:
         # get package name first:
-        pkg_name = pkg_tuple.values()[0]
+        pkg_name = pkg_tuple["pkg"]
 
         more_info_link = "http://bzr.savannah.gnu.org/lh/gnewsense/\
 packages-parkes/%s/annotate/head:/debian/README.gNewSense" % pkg_name
@@ -233,21 +233,18 @@ packages-parkes/%s/annotate/head:/debian/README.gNewSense" % pkg_name
         # start constructing a row for this package:
         row = "||%s" % pkg_name
 
-        try:
-            row += "||%s||%s" % (pkg_tuple[field_list[0]], # change type
-                                pkg_tuple[field_list[1]]) # reason
-        except KeyError:
-            # Okay. Change-Type or Changed-from-Debian field is not
-            # provided for this package. Let's do something:
-            for field in field_list:
-                if not pkg_tuple.has_key(field):
-                    # this field is not provided, so:
-                    row += "|| " # empty cell
-                else:
-                    # field not empty so fill it.
-                    row += "||%s" % pkg_tuple[field]
+        # add the `change type' & `reason' cells to row
+        for field in field_list:
+            field_value = pkg_tuple[field]
 
-        # added more info link in another cell
+            if field_value is None:
+                # insert a blank cell
+                row += "|| "
+            else:
+                # insert the field value
+                row += "||%s" % field_value
+
+        # added `more info link' in another cell
         row += "||[[%s|more info]]||" % more_info_link
 
         table.append(row)
