@@ -38,8 +38,8 @@ This is what the script does at present:
     'Added/Removed/Modified', 'Changed-From-Debian': 'one line
     description'}` is generated.
 
-    The value for keys `Change-Type` & `Changed-Frome-Debian` is None,
-	if values for those are not present in the `README.gNewSense`.
+    The value for keys `Change-Type` & `Changed-Frome-Debian` is `None`,
+	if they are not present in the `README.gNewSense` file.
 
 +   **S3** The script puts the names of packages, which doesn't contain
     `README.gNewSense` file, into a seperate list.
