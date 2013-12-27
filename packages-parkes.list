@@ -7,6 +7,9 @@ base-installer
 batik
 cdebootstrap
 claws-mail
+db4.6
+db4.7
+db4.8
 debian-cd
 debian-installer
 debian-installer-launcher
@@ -17,6 +20,7 @@ epiphany-browser
 fop
 galaxia
 gdm3
+glibmm2.4
 gnewsense-archive-keyring
 gnome-desktop
 iceweasel
@@ -24,6 +28,7 @@ kde4libs
 kdebase
 kdenetwork
 kernel-wedge
+lensfun
 liferea
 lintian
 linux-2.6
@@ -33,8 +38,11 @@ linux-latest-2.6
 live-build
 live-config
 meta-gnome2
+mplayer
 net-retriever
 openoffice.org
+pangomm
+psutils
 python-apt
 screenlets
 texlive-extra
