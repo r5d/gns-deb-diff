@@ -50,7 +50,7 @@ This is what the script does at present:
 
 +   **S5** The generated table is written to the `output-table-file`.
 
-+   **S4** The list of packages which doesn't contain `README.gNewSense`
++   **S6** The list of packages which doesn't contain `README.gNewSense`
     is barfed out to stdout.
 
 [gns-deb-diff-notes]: http://www.gnewsense.org/sddhrth/gns-deb-diff-notes
