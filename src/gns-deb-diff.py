@@ -11,12 +11,13 @@ import os.path as path
 import os
 import re
 from sys import exit, argv
+import gns_wiki as wiki
 
 # global variables.
 bzr_base_url = None
 local_dir = None
 pkgs_file = None
-table_file = None
+
 
 # list of recognized fields.
 field_list = [
@@ -86,7 +87,7 @@ def process_input():
     """
     Read relevant values from argv to start work.
     """
-    global bzr_base_url, local_dir, pkgs_file, table_file
+    global bzr_base_url, local_dir, pkgs_file
 
     # defaults
     remote_bzr_url = "bzr://bzr.savannah.gnu.org/gnewsense/packages-parkes"
@@ -94,19 +95,18 @@ def process_input():
 
     try:
         pkgs_file = argv[1]
-        table_file = argv[2]
     except IndexError:
         print "format: python path/to/gns-deb-diff.py \
-packages-list-file output-table-file local-packages-directory \
-remote-bzr-url\n\n`local-packages-directory' & 'remote-bzr-url' are \
+packages-list-file local-packages-directory remote-bzr-url\
+\n\n`local-packages-directory' & 'remote-bzr-url' are \
 optional\ndefault values:\n\tlocal-packages-directory: %s\n\t\
 remote-bzr-url: %s" % (remote_bzr_url, local_packages_directory)
         exit(1)
 
 
     # check if the local-packages-directory is given
-    if (len(argv) > 3):
-        local_dir = path.abspath(argv[3])
+    if (len(argv) > 2):
+        local_dir = path.abspath(argv[2])
     else:
         # stick with default directory
         local_dir = path.expanduser(local_packages_directory)
@@ -119,8 +119,8 @@ remote-bzr-url: %s" % (remote_bzr_url, local_packages_directory)
             exit(1)
 
     # check if remote_bzr_url is given
-    if (len(argv) > 4):
-        bzr_base_url = argv[4]
+    if (len(argv) > 3):
+        bzr_base_url = argv[3]
     else:
         # stick with default url
         bzr_base_url = remote_bzr_url
@@ -251,39 +251,17 @@ packages-parkes/%s/annotate/head:/debian/README.gNewSense" % pkg_name
 
     return table
 
-
-def write_diff_table(table):
-    """Write the table to file.
-
-    The filename is read from stdin
-    """
-    global table_file
-
-    try:
-        output_file = open(table_file, 'w')
-
-        for row in table:
-            output_file.write("%s\n" % row)
-
-    except IOError, e:
-        print "Something went wrong: %r" % e
-    finally:
-        output_file.close()
-
-
 def do_magic():
     """
     Does what it has to do :)
     """
-
-    global table_file
 
     process_input()
     pkgs_list = get_packages_list()
     get_packages(pkgs_list)
     pkg_tuples, noreadme_pkgs = slurp_readmes(pkgs_list)
     diff_table = generate_diff_table(pkg_tuples)
-    write_diff_table(diff_table)
+    wiki.update(diff_table)
 
     print "README.gNewSense not found for: %s" % noreadme_pkgs
 
