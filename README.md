@@ -25,6 +25,17 @@ See [here for notes about the script][gns-deb-diff-notes].
 that differ from Debian. Look at `packages-parkes.list` file for a
 sample.
 
+## Configuration
+
+Specify the `wikiusername`, `passphrase` & the wiki's url at
+`src/config/topsecret.txt`.
+
+The `topsecret.txt` file must follow this format:
+
+    wikiusername
+    passphrase
+    http://wikiurl.ext
+
 ## Description
 
 This is what the script does at present:
