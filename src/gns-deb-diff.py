@@ -143,7 +143,7 @@ def read_gns_readme(package):
     try:
         readme_file = open(readme_file_path, 'r')
     except IOError, e:
-        print e
+        # README.gNewSense file not found.
         return None # give up!
 
     readme_content = readme_file.read().strip()
