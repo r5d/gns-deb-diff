@@ -54,17 +54,21 @@ def update(table, src_dir):
         # Send the updated wiki page to moin wiki:
         mc.putPage(pagename, wiki_page_content)
         result = mc()
+        success = None
 
         try:
-            success, raw = tuple(result)
-
-            if success:
-                print "Updated %s" % pagename
-            else:
-                print "Something went wrong. Please report this issue."
-
+            success = result[1]
         except Fault, e:
             print e
+
+        if success:
+            print "Updated %s" % (pagename)
+            update_wiki_page_locally(
+                wiki_page_content,
+                path.join(src_dir, "wiki-files",
+                          "differences-with-debian.txt"))
+        else:
+            print ">> Script did not update wiki <<"
     else:
         print "Nothing new! %s/%s was not updated" % (wikiurl,
                                                      pagename)
@@ -112,12 +116,9 @@ def wiki_page_updated(wiki_page_content, src_dir):
         update = (filecmp.cmp(temp_file.name,
                               diff_with_deb, 1) == False)
     else:
-        # This is the first time the page is generated,
-        # so update the wiki.
+        # we don't have a local copy of the wiki page. So, let's
+        # update the wiki.
         update = True
-
-    if(update):
-        update_wiki_page_locally(wiki_page_content, diff_with_deb)
 
     return update
 
