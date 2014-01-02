@@ -267,6 +267,7 @@ def do_magic():
     diff_table = generate_diff_table(pkg_tuples)
     wiki.update(diff_table, src_dir)
 
-    print "README.gNewSense not found for: %s" % noreadme_pkgs
+    if(len(noreadme_pkgs) != 0):
+        print "README.gNewSense not found for: %s" % noreadme_pkgs
 
 do_magic()
