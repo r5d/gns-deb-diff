@@ -17,7 +17,7 @@ import gns_wiki as wiki
 bzr_base_url = None
 local_dir = None
 pkgs_file = None
-
+src_dir = None
 
 # list of recognized fields.
 field_list = [
@@ -87,11 +87,13 @@ def process_input():
     """
     Read relevant values from argv to start work.
     """
-    global bzr_base_url, local_dir, pkgs_file
+    global bzr_base_url, local_dir, pkgs_file, src_dir
 
     # defaults
     remote_bzr_url = "bzr://bzr.savannah.gnu.org/gnewsense/packages-parkes"
     local_packages_directory = "~/gnewsense/packages-parkes"
+
+    src_dir = path.dirname(argv[0])
 
     try:
         pkgs_file = argv[1]
@@ -256,12 +258,14 @@ def do_magic():
     Does what it has to do :)
     """
 
+    global src_dir
+
     process_input()
     pkgs_list = get_packages_list()
     get_packages(pkgs_list)
     pkg_tuples, noreadme_pkgs = slurp_readmes(pkgs_list)
     diff_table = generate_diff_table(pkg_tuples)
-    wiki.update(diff_table)
+    wiki.update(diff_table, src_dir)
 
     print "README.gNewSense not found for: %s" % noreadme_pkgs
 
