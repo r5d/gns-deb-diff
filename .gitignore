@@ -1,1 +1,4 @@
 test
+*.pyc
+src/wiki-files/differences-with-debian.txt
+src/config/

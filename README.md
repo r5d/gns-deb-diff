@@ -7,12 +7,14 @@ The present list of differences is documented at the
 [gNewSense wiki][1]. Look at the [savannah task #12794][2] for more
 info.
 
+See [here for notes about the script][gns-deb-diff-notes].
+
 [1]: http://www.gnewsense.org/Documentation/3/DifferencesWithDebian
 [2]: https://savannah.nongnu.org/task/?12794
 
 ## Synopsis
 
-    $ python gns-deb-diff.py packages-list-file output-table-file local-packages-directory remote-bzr-url
+    $ python gns-deb-diff.py packages-list-file local-packages-directory remote-bzr-url
 
 **defaults**
 
@@ -23,8 +25,16 @@ info.
 that differ from Debian. Look at `packages-parkes.list` file for a
 sample.
 
-`output-table-file`, is the file to which the script should write the
-difference table.
+## Configuration
+
+Specify the `wikiusername`, `passphrase` & the wiki's url at
+`src/config/topsecret.txt`.
+
+The `topsecret.txt` file must follow this format:
+
+    wikiusername
+    passphrase
+    http://wikiurl.ext
 
 ## Description
 
@@ -38,30 +48,24 @@ This is what the script does at present:
     'Added/Removed/Modified', 'Changed-From-Debian': 'one line
     description'}` is generated.
 
-    The value for keys `Change-Type` & `Changed-Frome-Debian` is `None`,
+    The value for keys `Change-Type` & `Changed-From-Debian` is `None`,
 	if they are not present in the `README.gNewSense` file.
 
 +   **S3** The script puts the names of packages, which doesn't contain
-    `README.gNewSense` file, into a seperate list.
+    `README.gNewSense` file, into a separate list.
 
 +   **S4** The dicts produced in **S2** is used to generate
     MoinMoin marked up table, like
     [the one found here][gns-deb-diff-notes].
 
-+   **S5** The generated table is written to the `output-table-file`.
++   **S5** A wiki page is created using the generated table.
 
-+   **S6** The list of packages which doesn't contain `README.gNewSense`
++   **S6** Using XML-RPC, the wiki page is pushed to the wiki.
+
++   **S7** The list of packages which doesn't contain `README.gNewSense`
     is barfed out to stdout.
 
 [gns-deb-diff-notes]: http://www.gnewsense.org/sddhrth/gns-deb-diff-notes
-
-## Notes
-
-At present, not all packages contain a `README.gNewSense` file. It'd
-nice, if all packages that were modified/removed/added in gNewSense
-have this file.
-
-See [here for more][gns-deb-diff-notes].
 
 ## License
 
