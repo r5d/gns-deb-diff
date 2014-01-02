@@ -18,13 +18,18 @@ def get_topsecret(src_dir):
     file.
     """
 
-    secrets = open(path.join(src_dir,
-                             "config",
-                             "topsecret.txt"), "r").readlines()
+    try:
+        secrets = open(path.join(src_dir,
+                                 "config",
+                                 "topsecret.txt"), "r").readlines()
 
-    username = secrets[0].strip()
-    password = secrets[1].strip()
-    wikiurl  = secrets[2].strip()
+        username = secrets[0].strip()
+        password = secrets[1].strip()
+        wikiurl  = secrets[2].strip()
+    except IOError:
+        print "ERROR: Specify your wikiusername, password & wikiurl at \
+`src/config/topsecret.txt`. Look at the README for the proper format."
+        exit(1)
 
     return username, password, wikiurl
 
