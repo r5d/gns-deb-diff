@@ -67,6 +67,10 @@ This is what the script does at present:
 
 [gns-deb-diff-notes]: http://www.gnewsense.org/sddhrth/gns-deb-diff-notes
 
+## Contact
+
+**rsiddharth** <rsiddharth@ninthfloor.org> or **gNewSense Hackers** <gnewsense-dev@nongnu.org>
+
 ## License
 
 The script is under the [WTFPL version 2 license][3]. See COPYING for more
