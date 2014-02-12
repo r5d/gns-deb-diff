@@ -11,6 +11,7 @@ batik
 cairomm
 cdebootstrap
 cfitsio3
+choose-mirror
 claws-mail
 db4.6
 db4.7
@@ -36,6 +37,7 @@ glibmm2.4
 gnewsense-archive-keyring
 gnome-desktop
 gtkmm2.4
+icedove
 iceweasel
 kde4libs
 kdebase
@@ -58,10 +60,13 @@ objcryst-fox
 openoffice.org
 pangomm
 perl-tk
+pkgsel
+popularity-contest
 psutils
 python-apt
 screenlets
 sip4-qt3
+software-center
 tcl8.4
 tcl8.5
 texlive-extra
