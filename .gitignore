@@ -5,6 +5,15 @@ src/config/
 
 # virtualenv
 bin/
+include/
+local/
 lib/
+man/
 share/
+man/
 pip-selfcheck.json
+
+# setup.py
+*egg-info/
+build/
+dist/
