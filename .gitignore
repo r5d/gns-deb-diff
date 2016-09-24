@@ -2,3 +2,9 @@ test
 *.pyc
 src/wiki-files/differences-with-debian.txt
 src/config/
+
+# virtualenv
+bin/
+lib/
+share/
+pip-selfcheck.json
