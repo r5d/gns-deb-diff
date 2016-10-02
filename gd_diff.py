@@ -20,6 +20,11 @@ field_list = [
     "Changed-From-Debian",
 ]
 
+# bzr
+bzr_base_url = 'bzr://bzr.savannah.gnu.org/gnewsense/'
+readme_url_fmt = '%s/packages-{}/{}/debian/README.gNewSense' % bzr_base_url
+
+
 def read_file(fpath):
     """Read file `f` and return its content.
 
@@ -92,3 +97,19 @@ def save_gns_readme(content, release, pkg, local_dir):
         print('Saved {}'.format(gns_readme))
 
 
+def slurp_gns_readme(release, pkg, local_dir):
+    """Read and save the README.gNewSense for `pkg` in `release`.
+
+    The README.gNewSense file gets save at `local_dir`/`release`/`pkg`/debian/
+    """
+    readme_url = readme_url_fmt.format(release, pkg)
+    cmd = 'bzr cat {}'.format(readme_url)
+    cp = execute(cmd, out=PIPE, err=PIPE)
+
+    if(cp.returncode == 0):
+        save_gns_readme(cp.stdout, release, pkg, local_dir)
+        return True
+    else:
+        print("README.gNewSense not found for package {}".format(pkg),
+              file=sys.stderr)
+        return False
