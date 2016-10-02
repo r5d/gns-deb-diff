@@ -6,9 +6,11 @@
 #  gns-deb-diff is under the Public Domain. See
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
+import os
 import shlex
 import sys
 
+from os import path
 from subprocess import run, PIPE
 
 
@@ -58,3 +60,35 @@ def get_packages(pkgs_file):
     pkgs_iter = map(lambda x: x.strip(), pkgs)
 
     return pkgs_iter
+
+
+def save_gns_readme(content, release, pkg, local_dir):
+    """Save README.gNewsense locally.
+
+    :param str content:
+        Content of the README.gNewsense file.
+    :param str release:
+        Release name.
+    :param str pkg:
+        Package name.
+    :param str local_dir:
+        Root directory under which readme of all packages get stored.
+    """
+    # create gns_readme dir. for pkg.
+    gns_readme_dir = path.join(local_dir, release, pkg, 'debian')
+
+    try:
+        os.makedirs(gns_readme_dir, exist_ok=True)
+    except Exception as e:
+        print("Error creating directory '%s'\n Error Info:\n %r" % (gns_readme_dir, e),
+              file=sys.stderr)
+        sys.exit(1)
+
+    gns_readme = path.join(gns_readme_dir, 'README.gNewSense')
+
+    with open(gns_readme, 'wb') as f:
+        f.write(content)
+        f.flush()
+        print('Saved {}'.format(gns_readme))
+
+

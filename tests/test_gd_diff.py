@@ -10,6 +10,9 @@ import os
 import subprocess
 import sys
 
+from os import path
+from shutil import rmtree
+
 from nose.tools import *
 
 from gd_diff import *
@@ -21,6 +24,7 @@ class TestGdDiff(object):
         """Setup method for this class."""
         self.pkgs_file = "tests/files/pkgs.list"
         self.pkgs_file_ne = 'tests/nonexistent-file.list'
+        self.gns_pkgs_dir = 'tests/gns-pkgs'
 
     def test_read_file_success(self):
         f_content = read_file(self.pkgs_file)
@@ -67,7 +71,45 @@ class TestGdDiff(object):
         for pkg in pkgs_iter:
             assert not ' ' in pkg
 
+    def test_save_gns_readme(self):
+        cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
+        cp = execute(cmd, out=subprocess.PIPE)
+        readme_content = cp.stdout
+
+        # save it
+        save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+
+        gns_readme_file = path.join(self.gns_pkgs_dir, 'parkes', 'antlr', 'debian', 'README.gNewSense')
+        with open(gns_readme_file, 'rb') as f:
+            assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+
+
+    def test_save_gns_readme_double(self):
+        cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
+        cp = execute(cmd, out=subprocess.PIPE)
+        readme_content = cp.stdout
+
+        # save it twice
+        save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+        save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+
+        gns_readme_file = path.join(self.gns_pkgs_dir, 'parkes', 'antlr', 'debian', 'README.gNewSense')
+        with open(gns_readme_file, 'rb') as f:
+            assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+
+    @raises(SystemExit)
+    def test_save_gns_readme_error(self):
+        os.mkdir(self.gns_pkgs_dir, mode=0o500)
+
+        # must error out
+        readme_content = 'lorem ipsum'
+        with open(os.devnull, 'w') as sys.stderr:
+            save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+
+
     def teardown(self):
         """Teardown method for this class."""
-        pass
+        if(path.exists(self.gns_pkgs_dir)):
+            os.chmod(self.gns_pkgs_dir, mode=0o700)
+            rmtree(self.gns_pkgs_dir)
 
