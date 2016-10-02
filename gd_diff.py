@@ -6,7 +6,11 @@
 #  gns-deb-diff is under the Public Domain. See
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
+import shlex
 import sys
+
+from subprocess import run, PIPE
+
 
 # list of recognized fields.
 field_list = [
@@ -26,6 +30,23 @@ def read_file(fpath):
         sys.exit(1)
 
     return f.read()
+
+
+def execute(cmd, out=None, err=None):
+    """Run `cmd`. Returns an instance of `subprocess.CompletedProcess`
+
+    `cmd` must be a string containing the command to run.
+    """
+    cmd = shlex.split(cmd)
+
+    try:
+        completed_process = run(cmd, stdout=out, stderr=err)
+    except (FileNotFoundError, OSError, ValueError) as e:
+        print("Error running '%s'\n Error Info:\n %r" % (cmd[0], e),
+              file=sys.stderr)
+        sys.exit(1)
+
+    return completed_process
 
 
 def get_packages(pkgs_file):

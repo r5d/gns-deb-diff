@@ -7,11 +7,13 @@
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
 import os
+import subprocess
 import sys
 
 from nose.tools import *
 
 from gd_diff import *
+
 
 class TestGdDiff(object):
 
@@ -30,6 +32,29 @@ class TestGdDiff(object):
     def test_read_file_error(self):
         with open(os.devnull, 'w') as sys.stderr:
             f_content = read_file(self.pkgs_file_ne)
+
+
+    def test_execute_success(self):
+        cmd = 'python --version'
+        cp = execute(cmd, out=subprocess.PIPE)
+
+        assert cp.returncode == 0
+        assert cp.stdout.split()[0] == b'Python'
+        assert cp.stdout.split()[1].startswith(b'3.5')
+
+    def test_execute_cmderror(self):
+        cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/nonexistent-packages/debian/README.gNewSense'
+        cp = execute(cmd, err=subprocess.PIPE)
+
+        assert cp.returncode == 3
+        assert cp.stderr.startswith(b'bzr: ERROR:')
+
+
+    @raises(SystemExit)
+    def test_execute_raise_exception(self):
+        cmd = 'cornhole computers'
+        with open(os.devnull, 'w') as sys.stderr:
+            cp = execute(cmd)
 
 
     def test_get_packages(self):
