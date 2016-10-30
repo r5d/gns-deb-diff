@@ -57,7 +57,7 @@ def execute(cmd, out=None, err=None):
     return completed_process
 
 
-def get_packages(pkgs_file):
+def read_packages(pkgs_file):
     """Return an iterator contaning of package names from `pkgs_file`.
 
     """

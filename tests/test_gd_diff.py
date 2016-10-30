@@ -63,12 +63,12 @@ class TestGdDiff(object):
             cp = execute(cmd)
 
 
-    def test_get_packages(self):
-        pkgs_iter = get_packages(self.pkgs_file)
+    def test_read_packages(self):
+        pkgs_iter = read_packages(self.pkgs_file)
         assert len(list(pkgs_iter)) == 82
 
-    def test_get_packages_sanity(self):
-        pkgs_iter = get_packages(self.pkgs_file)
+    def test_read_packages_sanity(self):
+        pkgs_iter = read_packages(self.pkgs_file)
 
         for pkg in pkgs_iter:
             assert not ' ' in pkg
@@ -131,7 +131,7 @@ class TestGdDiff(object):
 
 
     def test_slurp_all_gns_readmes(self):
-        pkgs = get_packages(self.small_pkgs_file)
+        pkgs = read_packages(self.small_pkgs_file)
 
         # expected packages with no readmes
         expected_pkgs_noreadmes = [
