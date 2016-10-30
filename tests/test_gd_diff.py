@@ -143,6 +143,17 @@ class TestGdDiff(object):
         assert_equal(pkgs_noreadmes, expected_pkgs_noreadmes)
 
 
+    def test_read_gns_readme(self):
+        # first download the antlr readme
+        saved = slurp_gns_readme('parkes', 'antlr', self.gns_pkgs_dir)
+        assert saved
+
+        antlr_readme_content = read_gns_readme('parkes', 'antlr', self.gns_pkgs_dir)
+        expected_antlr_readme_content = 'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+
+        assert_equal(antlr_readme_content, expected_antlr_readme_content)
+
+
     def teardown(self):
         """Teardown method for this class."""
         if(path.exists(self.gns_pkgs_dir)):
