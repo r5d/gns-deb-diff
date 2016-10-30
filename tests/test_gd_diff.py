@@ -23,6 +23,7 @@ class TestGdDiff(object):
     def setup(self):
         """Setup method for this class."""
         self.pkgs_file = 'tests/files/parkes-pkgs.list'
+        self.small_pkgs_file = 'tests/files/small-parkes-pkgs.list'
         self.pkgs_file_ne = 'tests/nonexistent-file.list'
         self.gns_pkgs_dir = 'tests/gns-pkgs'
         self.stderr_orig = sys.stderr
@@ -127,6 +128,19 @@ class TestGdDiff(object):
                                     'non-existent-pkg', 'debian',
                                     'README.gNewSense')
         assert not path.exists(gns_readme_file)
+
+
+    def test_slurp_all_gns_readmes(self):
+        pkgs = get_packages(self.small_pkgs_file)
+
+        # expected packages with no readmes
+        expected_pkgs_noreadmes = [
+            'pkg-with-no-readme',
+            'another-pkgs-no-readme',
+        ]
+
+        pkgs_noreadmes = slurp_all_gns_readmes('parkes', pkgs, self.gns_pkgs_dir)
+        assert_equal(pkgs_noreadmes, expected_pkgs_noreadmes)
 
 
     def teardown(self):

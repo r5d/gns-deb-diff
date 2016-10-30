@@ -113,3 +113,20 @@ def slurp_gns_readme(release, pkg, local_dir):
         print("README.gNewSense not found for package {}".format(pkg),
               file=sys.stderr)
         return False
+
+
+def slurp_all_gns_readmes(release, pkgs, local_dir):
+    """Read and save all README.gNewSense for `pkgs` in `release`.
+
+    The README.gNewSense files gets saved under `local_dir`/`release`
+
+    Returns list of packages in `pkgs` that does not have README.gNewSense.
+    """
+    pkgs_noreadmes = []
+    for pkg in pkgs:
+        slurped = slurp_gns_readme(release, pkg, local_dir)
+
+        if(not slurped):
+            pkgs_noreadmes.append(pkg)
+
+    return pkgs_noreadmes
