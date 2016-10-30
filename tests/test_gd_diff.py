@@ -154,6 +154,50 @@ class TestGdDiff(object):
         assert_equal(antlr_readme_content, expected_antlr_readme_content)
 
 
+    def test_slurp_fields_from_readme(self):
+        readme_content = ''
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], None)
+        assert_equal(field_values['Changed-From-Debian'], None)
+
+        readme_content = 'Changed-From-Debian: \n'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], None)
+        assert_equal(field_values['Changed-From-Debian'], None)
+
+        readme_content = 'Change-Type: Deblob\n'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], 'Deblob')
+        assert_equal(field_values['Changed-From-Debian'], None)
+
+        readme_content = 'Changed-From-Debian: \nChange-Type: \n'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], None)
+        assert_equal(field_values['Changed-From-Debian'], None)
+
+        readme_content = 'Changed-From-Debian: Branding.    \nChange-Type: \n'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], None)
+        assert_equal(field_values['Changed-From-Debian'], 'Branding.')
+
+        readme_content = 'Changed-From-Debian: \nChange-Type: Modified'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], 'Modified')
+        assert_equal(field_values['Changed-From-Debian'], None)
+
+        readme_content = 'Changed-From-Debian:Fixed ambiguous use of the word free.\n\n\nChange-Type:Deblob\n'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], 'Deblob')
+        assert_equal(field_values['Changed-From-Debian'],
+                     'Fixed ambiguous use of the word free.')
+
+        readme_content  = 'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+        field_values = slurp_fields_from_readme(readme_content)
+        assert_equal(field_values['Change-Type'], 'Modified')
+        assert_equal(field_values['Changed-From-Debian'],
+                     'Removed example with non-free files.')
+
+
     def teardown(self):
         """Teardown method for this class."""
         if(path.exists(self.gns_pkgs_dir)):

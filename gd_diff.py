@@ -7,6 +7,7 @@
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
 import os
+import re
 import shlex
 import sys
 
@@ -143,3 +144,32 @@ def read_gns_readme(release, pkg, local_dir):
     readme_content = read_file(readme_path)
 
     return readme_content
+
+
+def slurp_fields_from_readme(content):
+    """Returns dict containing fields slurped from `content`
+
+    - If a field is not defined or if its value is empty in the
+    `content`, then its corresponding value in the dict will be None.
+
+    """
+    # list of recognized fields.
+    field_list = [
+        'Change-Type',
+        'Changed-From-Debian',
+    ]
+
+    field_values = {}
+    for field in field_list:
+        pattern = r'{}:[ ]*(.+)'.format(field)
+        field_pattern = re.compile(pattern)
+        field_match = field_pattern.search(content)
+
+        if (field_match and
+            field_match.group(1) and
+            field_match.group(1).strip()):
+            field_values[field] = field_match.group(1).strip()
+        else:
+            field_values[field] = None
+
+    return field_values
