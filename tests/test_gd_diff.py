@@ -22,7 +22,7 @@ class TestGdDiff(object):
 
     def setup(self):
         """Setup method for this class."""
-        self.pkgs_file = "tests/files/pkgs.list"
+        self.pkgs_file = 'tests/files/parkes-pkgs.list'
         self.pkgs_file_ne = 'tests/nonexistent-file.list'
         self.gns_pkgs_dir = 'tests/gns-pkgs'
         self.stderr_orig = sys.stderr
