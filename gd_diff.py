@@ -85,8 +85,8 @@ def save_gns_readme(content, release, pkg, local_dir):
     try:
         os.makedirs(gns_readme_dir, exist_ok=True)
     except Exception as e:
-        print("Error creating directory '%s'\n Error Info:\n %r" % (gns_readme_dir, e),
-              file=sys.stderr)
+        print("Error creating directory '%s'\n Error Info:\n %r" %
+              (gns_readme_dir, e), file=sys.stderr)
         sys.exit(1)
 
     gns_readme = path.join(gns_readme_dir, 'README.gNewSense')
