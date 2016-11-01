@@ -11,9 +11,12 @@ import re
 import shlex
 import sys
 
+import requests
+
 from os import path
 from subprocess import run, PIPE
 
+from bs4 import BeautifulSoup
 
 # list of recognized fields.
 field_list = [
@@ -66,6 +69,31 @@ def read_packages(pkgs_file):
     pkgs_iter = map(lambda x: x.strip(), pkgs)
 
     return pkgs_iter
+
+
+def get_packages(release):
+    """Prints out list packages for `release`.
+
+    List of packages is slurped from
+        http://bzr.savannah.gnu.org/lh/gnewsense/packages-`release`
+    """
+    url = 'http://bzr.savannah.gnu.org/lh/gnewsense/packages-{}/'
+    req = url.format(release)
+
+    try:
+        res = requests.get(req)
+    except ConnectionError as ce:
+        print('ERROR: Problem GETting {} \n{}'.format(req, ce))
+        sys.exit(1)
+
+    if res.status_code != 200:
+        print('{}: Error GETting {}'.format(res.status_code, req))
+        sys.exit(1)
+
+    html_forest = BeautifulSoup(res.text, 'html.parser')
+
+    for td in html_forest.find_all('td', class_='autcell'):
+        print(td.a.string.strip())
 
 
 def save_gns_readme(content, release, pkg, local_dir):

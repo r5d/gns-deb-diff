@@ -41,8 +41,9 @@ config = {
     ],
     'keywords': 'gNewSense Debian documentation',
     'packages': find_packages(),
+    'install_requires': ['beautifulsoup4', 'requests'],
     'extras_require': {
-        'dev': ['nose', 'coverage', 'twine', 'wheel'],
+        'dev': ['nose', 'mock', 'coverage', 'twine', 'wheel'],
     }
 }
 
