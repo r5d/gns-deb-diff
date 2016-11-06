@@ -181,12 +181,6 @@ def slurp_fields_from_readme(content):
     `content`, then its corresponding value in the dict will be None.
 
     """
-    # list of recognized fields.
-    field_list = [
-        'Change-Type',
-        'Changed-From-Debian',
-    ]
-
     field_values = {}
     for field in field_list:
         pattern = r'{}:[ ]*(.+)'.format(field)
