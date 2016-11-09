@@ -43,6 +43,20 @@ def read_file(fpath):
     return f.read()
 
 
+def write_file(fpath, content):
+    """Write `content` to file `fpath`.
+
+    """
+    try:
+      f = open(fpath, 'w')
+      f.write(content)
+      f.close()
+    except IOError as e:
+        print('Error creating and writing content to {}\n {}'.format(
+            fpath, e))
+        exit(1)
+
+
 def execute(cmd, out=None, err=None):
     """Run `cmd`. Returns an instance of `subprocess.CompletedProcess`
 
@@ -119,11 +133,8 @@ def save_gns_readme(content, release, pkg, local_dir):
         sys.exit(1)
 
     gns_readme = path.join(gns_readme_dir, 'README.gNewSense')
-
-    with open(gns_readme, 'wb') as f:
-        f.write(content)
-        f.flush()
-        print('Saved {}'.format(gns_readme))
+    write_file(gns_readme, content)
+    print('Saved {}'.format(gns_readme))
 
 
 def slurp_gns_readme(release, pkg, local_dir):
@@ -136,7 +147,7 @@ def slurp_gns_readme(release, pkg, local_dir):
     cp = execute(cmd, out=PIPE, err=PIPE)
 
     if(cp.returncode == 0):
-        save_gns_readme(cp.stdout, release, pkg, local_dir)
+        save_gns_readme(cp.stdout.decode(), release, pkg, local_dir)
         return True
     else:
         print("README.gNewSense not found for package {}".format(pkg),

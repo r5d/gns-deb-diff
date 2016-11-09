@@ -28,7 +28,14 @@ class TestGdDiff(object):
         self.small_pkgs_file = 'tests/files/small-parkes-pkgs.list'
         self.pkgs_file_ne = 'tests/nonexistent-file.list'
         self.gns_pkgs_dir = 'tests/gns-pkgs'
+        self.test_home = 'tests/HOME'
+        self.test_w_file = os.path.join(self.test_home, 'w_file')
+
         self.stderr_orig = sys.stderr
+
+        # make test home
+        os.mkdir(self.test_home, mode=0o700)
+
 
     def test_read_file_success(self):
         f_content = read_file(self.pkgs_file)
@@ -36,10 +43,18 @@ class TestGdDiff(object):
         assert isinstance(f_content, str)
         assert_equal(len(f_content.split('\n')), 82)
 
+
     @raises(SystemExit)
     def test_read_file_error(self):
         with open(os.devnull, 'w') as sys.stderr:
             f_content = read_file(self.pkgs_file_ne)
+
+
+    def test_write_file(self):
+        content = 'One Goodbye\n Stealing Romance'
+        write_file(self.test_w_file, content)
+
+        assert read_file(self.test_w_file) == content
 
 
     def test_execute_success(self):
@@ -92,7 +107,7 @@ class TestGdDiff(object):
     def test_save_gns_readme(self):
         cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
         cp = execute(cmd, out=subprocess.PIPE)
-        readme_content = cp.stdout
+        readme_content = cp.stdout.decode() # convert to str
 
         # save it
         save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
@@ -105,7 +120,7 @@ class TestGdDiff(object):
     def test_save_gns_readme_double(self):
         cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
         cp = execute(cmd, out=subprocess.PIPE)
-        readme_content = cp.stdout
+        readme_content = cp.stdout.decode() # convert to str
 
         # save it twice
         save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
@@ -219,6 +234,9 @@ class TestGdDiff(object):
         if(path.exists(self.gns_pkgs_dir)):
             os.chmod(self.gns_pkgs_dir, mode=0o700)
             rmtree(self.gns_pkgs_dir)
+
+        if(path.exists(self.test_home)):
+            rmtree(self.test_home)
 
         # restore sys.stderr
         sys.stderr = self.stderr_orig
