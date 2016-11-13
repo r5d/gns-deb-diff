@@ -6,6 +6,7 @@
 #  gns-deb-diff is under the Public Domain. See
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
+import json
 import os
 import re
 import shlex
@@ -227,6 +228,19 @@ def config_dir():
 
 def config_file():
     return os.path.join(config_dir(), 'config')
+
+
+def read_config_file():
+    """Return config as a Python Object; False when config does not \
+    exist.
+
+    """
+    cf = config_file()
+
+    if not os.path.isfile(cf):
+        return False
+
+    return json.load(open(cf, 'r'))
 
 
 def pkgs_dir():

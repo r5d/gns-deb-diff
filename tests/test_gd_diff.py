@@ -6,6 +6,7 @@
 #  gns-deb-diff is under the Public Domain. See
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
+import json
 import os
 import subprocess
 import sys
@@ -245,6 +246,28 @@ class TestGdDiff(object):
             c_file = config_file()
             assert_equal(c_file, os.path.join(self.test_home, '.config',
                                              'gns-deb-diff', 'config'))
+
+
+    def test_read_config_file_fail(self):
+        config = read_config_file()
+        assert_equal(config, False)
+
+
+    def test_read_config_file_success(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            c_file = config_file()
+
+            # first write sample config file.
+            json.dump({'user': 'usrnm', 'pass': 'weasaspeciesrfckd'},
+                      open(c_file, 'w'))
+
+            # now on to the test.
+            config = read_config_file()
+            assert_equal(config['user'], 'usrnm')
+            assert_equal(config['pass'], 'weasaspeciesrfckd')
 
 
     def test_pkgs_dir(self):
