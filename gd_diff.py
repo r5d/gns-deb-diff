@@ -313,3 +313,15 @@ def configured_p():
         return True
     else:
         return False
+
+
+def configure():
+    """Configure gns-deb-diff.
+    """
+    # prompt username and password.
+    config = {}
+    config['user'] = input('gNewSense wiki username: ')
+    config['pass'] = input('gNewSense wiki password: ')
+
+    json.dump(config, open(config_file(), 'w'))
+    os.chmod(config_file(), mode=0o600)

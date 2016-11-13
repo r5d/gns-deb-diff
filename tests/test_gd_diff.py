@@ -6,6 +6,7 @@
 #  gns-deb-diff is under the Public Domain. See
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
+import builtins
 import json
 import os
 import subprocess
@@ -348,6 +349,27 @@ class TestGdDiff(object):
 
             configured = configured_p()
             assert_equal(configured, True)
+
+
+    def test_configure(self):
+        def env(e):
+            return self.test_home
+
+        inputs = ['usrnm', 'weasaspeciesrfckd']
+        def mock_input(p):
+            return inputs.pop(0)
+
+        with mock.patch('os.getenv', new=env), \
+             mock.patch('builtins.input', new=mock_input):
+            configure()
+
+            # read config file
+            config = json.load(open(config_file(), 'r'))
+
+            # tests
+            assert_equal(config['user'], 'usrnm')
+            assert_equal(config['pass'], 'weasaspeciesrfckd')
+            assert_equal(oct(os.stat(config_file()).st_mode), '0o100600')
 
 
     def teardown(self):
