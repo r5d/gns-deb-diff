@@ -86,7 +86,7 @@ def read_packages(pkgs_file):
 
 
 def get_packages(release):
-    """Return list packages for `release`.
+    """Return newline separated list of packages for `release`.
 
     List of packages is slurped from
         http://bzr.savannah.gnu.org/lh/gnewsense/packages-`release`
@@ -106,9 +106,9 @@ def get_packages(release):
 
     html_forest = BeautifulSoup(res.text, 'html.parser')
 
-    pkgs = []
+    pkgs = '' # newline separated list of pkgs.
     for td in html_forest.find_all('td', class_='autcell'):
-        pkgs.append(td.a.string.strip())
+        pkgs += td.a.string.strip() + '\n'
 
     return pkgs
 
