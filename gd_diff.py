@@ -229,6 +229,18 @@ def config_file():
     return os.path.join(config_dir(), 'config')
 
 
+def pkgs_dir():
+    """Return the `pkgs` directory.
+
+    As a side effect, the directory is created if it does not exist.
+    """
+    pd = os.path.join(config_dir(), 'pkgs')
+    if not os.path.isdir(pd):
+        os.mkdir(pd)
+
+    return pd
+
+
 def configured_p():
     """Returns True if gns-deb-diff is configured; False otherwise.
     """

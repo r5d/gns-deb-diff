@@ -247,6 +247,17 @@ class TestGdDiff(object):
                                              'gns-deb-diff', 'config'))
 
 
+    def test_pkgs_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            pd = pkgs_dir()
+            assert_equal(pd, os.path.join(self.test_home, '.config',
+                                          'gns-deb-diff', 'pkgs'))
+            assert_equal(os.path.isdir(pd), True)
+
+
     def test_configured_p_no(self):
         def env(e):
             return self.test_home
