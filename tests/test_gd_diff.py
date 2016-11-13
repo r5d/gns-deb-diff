@@ -103,6 +103,149 @@ class TestGdDiff(object):
         assert_equal(pkgs, 'antlr\napt\napt-setup\nautoconf\nautoconf2.59\nautoconf2.64\nbacula\nbase-files\nbase-installer\nbatik\ncairomm\ncdebootstrap\ncfitsio3\nchoose-mirror\nclaws-mail\ndb4.6\ndb4.7\ndb4.8\ndebian-cd\ndebian-edu\ndebian-installer\ndebian-installer-launcher\ndebootstrap\ndesktop-base\ndoc-linux\ndoc-linux-hr\ndoc-linux-it\ndoc-linux-ja\ndoc-linux-pl\nenscript\nepiphany-browser\nfop\nfreetype\ngalaxia\ngdm3\nglibmm2.4\ngnewsense-archive-keyring\ngnome-desktop\ngtkmm2.4\nicedove\niceweasel\nkde4libs\nkdebase\nkdebase-workspace\nkdenetwork\nkernel-wedge\nlensfun\nliferea\nlintian\nlinux-2.6\nlinux-kernel-di-amd64-2.6\nlinux-kernel-di-i386-2.6\nlinux-latest-2.6\nlive-build\nlive-config\nmeta-gnome2\nmplayer\nnet-retriever\nobjcryst-fox\nopenbox-themes\nopenjdk-6\nopenoffice.org\npangomm\nperl-tk\npkgsel\npopularity-contest\npsutils\npython-apt\nscreenlets\nsip4-qt3\nsoftware-center\ntcl8.4\ntcl8.5\ntexlive-extra\ntk8.4\ntk8.5\nupdate-manager\nvim\nwmaker\nxchat\nxdm\nxorg-server\nxserver-xorg-video-siliconmotion\nyeeloong-base\n')
 
 
+    def test_config_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            c_dir = config_dir()
+            assert_equal(c_dir, os.path.join(self.test_home,
+                                             '.config', 'gns-deb-diff'))
+            assert_equal(os.path.isdir(c_dir), True)
+
+
+    def test_config_file(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            c_file = config_file()
+            assert_equal(c_file, os.path.join(self.test_home, '.config',
+                                             'gns-deb-diff', 'config'))
+
+
+    def test_read_config_file_fail(self):
+        config = read_config_file()
+        assert_equal(config, False)
+
+
+    def test_read_config_file_success(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            c_file = config_file()
+
+            # first write sample config file.
+            json.dump({'user': 'usrnm', 'pass': 'weasaspeciesrfckd'},
+                      open(c_file, 'w'))
+
+            # now on to the test.
+            config = read_config_file()
+            assert_equal(config['user'], 'usrnm')
+            assert_equal(config['pass'], 'weasaspeciesrfckd')
+
+
+    def test_pkgs_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            pd = pkgs_dir()
+            assert_equal(pd, os.path.join(self.test_home, '.config',
+                                          'gns-deb-diff', 'pkgs'))
+            assert_equal(os.path.isdir(pd), True)
+
+
+    def test_mk_pkgs_list(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            pkgs_file = mk_pkgs_list('parkes')
+            # test
+            assert_equal(read_file(pkgs_file), 'antlr\napt\napt-setup\nautoconf\nautoconf2.59\nautoconf2.64\nbacula\nbase-files\nbase-installer\nbatik\ncairomm\ncdebootstrap\ncfitsio3\nchoose-mirror\nclaws-mail\ndb4.6\ndb4.7\ndb4.8\ndebian-cd\ndebian-edu\ndebian-installer\ndebian-installer-launcher\ndebootstrap\ndesktop-base\ndoc-linux\ndoc-linux-hr\ndoc-linux-it\ndoc-linux-ja\ndoc-linux-pl\nenscript\nepiphany-browser\nfop\nfreetype\ngalaxia\ngdm3\nglibmm2.4\ngnewsense-archive-keyring\ngnome-desktop\ngtkmm2.4\nicedove\niceweasel\nkde4libs\nkdebase\nkdebase-workspace\nkdenetwork\nkernel-wedge\nlensfun\nliferea\nlintian\nlinux-2.6\nlinux-kernel-di-amd64-2.6\nlinux-kernel-di-i386-2.6\nlinux-latest-2.6\nlive-build\nlive-config\nmeta-gnome2\nmplayer\nnet-retriever\nobjcryst-fox\nopenbox-themes\nopenjdk-6\nopenoffice.org\npangomm\nperl-tk\npkgsel\npopularity-contest\npsutils\npython-apt\nscreenlets\nsip4-qt3\nsoftware-center\ntcl8.4\ntcl8.5\ntexlive-extra\ntk8.4\ntk8.5\nupdate-manager\nvim\nwmaker\nxchat\nxdm\nxorg-server\nxserver-xorg-video-siliconmotion\nyeeloong-base\n')
+
+
+    def test_readmes_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            rd_parkes = readmes_dir('parkes')
+            assert_equal(rd_parkes, os.path.join(self.test_home, '.config',
+                                                 'gns-deb-diff', 'readmes',
+                                                 'parkes'))
+            assert_equal(os.path.isdir(rd_parkes), True)
+
+
+    def test_wiki_page_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            wd_parkes = wiki_page_dir('parkes')
+            assert_equal(wd_parkes, os.path.join(self.test_home, '.config',
+                                                 'gns-deb-diff', 'wiki-page',
+                                                 'parkes'))
+            assert_equal(os.path.isdir(wd_parkes), True)
+
+
+    def test_write_wiki_page(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            release = 'parkes'
+            write_wiki_page(release, 'wiki content')
+            wp_file = os.path.join(wiki_page_dir(release), 'last.rev')
+            assert_equal(read_file(wp_file), 'wiki content')
+
+
+    def test_configured_p_no(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            configured = configured_p()
+            assert_equal(configured, False)
+
+
+    def test_configured_p_yes(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            c_path = config_dir()
+            c_file = config_file()
+
+            open(c_file, 'w').close()
+
+            configured = configured_p()
+            assert_equal(configured, True)
+
+
+    def test_configure(self):
+        def env(e):
+            return self.test_home
+
+        inputs = ['usrnm', 'weasaspeciesrfckd']
+        def mock_input(p):
+            return inputs.pop(0)
+
+        with mock.patch('os.getenv', new=env), \
+             mock.patch('builtins.input', new=mock_input):
+            configure()
+
+            # read config file
+            config = json.load(open(config_file(), 'r'))
+
+            # tests
+            assert_equal(config['user'], 'usrnm')
+            assert_equal(config['pass'], 'weasaspeciesrfckd')
+            assert_equal(oct(os.stat(config_file()).st_mode), '0o100600')
+
+
     def test_save_gns_readme(self):
         def env(e):
             return self.test_home
@@ -249,149 +392,6 @@ class TestGdDiff(object):
         assert_equal(field_values['Change-Type'], 'Modified')
         assert_equal(field_values['Changed-From-Debian'],
                      'Removed example with non-free files.')
-
-
-    def test_config_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            c_dir = config_dir()
-            assert_equal(c_dir, os.path.join(self.test_home,
-                                             '.config', 'gns-deb-diff'))
-            assert_equal(os.path.isdir(c_dir), True)
-
-
-    def test_config_file(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            c_file = config_file()
-            assert_equal(c_file, os.path.join(self.test_home, '.config',
-                                             'gns-deb-diff', 'config'))
-
-
-    def test_read_config_file_fail(self):
-        config = read_config_file()
-        assert_equal(config, False)
-
-
-    def test_read_config_file_success(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            c_file = config_file()
-
-            # first write sample config file.
-            json.dump({'user': 'usrnm', 'pass': 'weasaspeciesrfckd'},
-                      open(c_file, 'w'))
-
-            # now on to the test.
-            config = read_config_file()
-            assert_equal(config['user'], 'usrnm')
-            assert_equal(config['pass'], 'weasaspeciesrfckd')
-
-
-    def test_pkgs_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            pd = pkgs_dir()
-            assert_equal(pd, os.path.join(self.test_home, '.config',
-                                          'gns-deb-diff', 'pkgs'))
-            assert_equal(os.path.isdir(pd), True)
-
-
-    def test_mk_pkgs_list(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            pkgs_file = mk_pkgs_list('parkes')
-            # test
-            assert_equal(read_file(pkgs_file), 'antlr\napt\napt-setup\nautoconf\nautoconf2.59\nautoconf2.64\nbacula\nbase-files\nbase-installer\nbatik\ncairomm\ncdebootstrap\ncfitsio3\nchoose-mirror\nclaws-mail\ndb4.6\ndb4.7\ndb4.8\ndebian-cd\ndebian-edu\ndebian-installer\ndebian-installer-launcher\ndebootstrap\ndesktop-base\ndoc-linux\ndoc-linux-hr\ndoc-linux-it\ndoc-linux-ja\ndoc-linux-pl\nenscript\nepiphany-browser\nfop\nfreetype\ngalaxia\ngdm3\nglibmm2.4\ngnewsense-archive-keyring\ngnome-desktop\ngtkmm2.4\nicedove\niceweasel\nkde4libs\nkdebase\nkdebase-workspace\nkdenetwork\nkernel-wedge\nlensfun\nliferea\nlintian\nlinux-2.6\nlinux-kernel-di-amd64-2.6\nlinux-kernel-di-i386-2.6\nlinux-latest-2.6\nlive-build\nlive-config\nmeta-gnome2\nmplayer\nnet-retriever\nobjcryst-fox\nopenbox-themes\nopenjdk-6\nopenoffice.org\npangomm\nperl-tk\npkgsel\npopularity-contest\npsutils\npython-apt\nscreenlets\nsip4-qt3\nsoftware-center\ntcl8.4\ntcl8.5\ntexlive-extra\ntk8.4\ntk8.5\nupdate-manager\nvim\nwmaker\nxchat\nxdm\nxorg-server\nxserver-xorg-video-siliconmotion\nyeeloong-base\n')
-
-
-    def test_readmes_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            rd_parkes = readmes_dir('parkes')
-            assert_equal(rd_parkes, os.path.join(self.test_home, '.config',
-                                                 'gns-deb-diff', 'readmes',
-                                                 'parkes'))
-            assert_equal(os.path.isdir(rd_parkes), True)
-
-
-    def test_wiki_page_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            wd_parkes = wiki_page_dir('parkes')
-            assert_equal(wd_parkes, os.path.join(self.test_home, '.config',
-                                                 'gns-deb-diff', 'wiki-page',
-                                                 'parkes'))
-            assert_equal(os.path.isdir(wd_parkes), True)
-
-
-    def test_write_wiki_page(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            release = 'parkes'
-            write_wiki_page(release, 'wiki content')
-            wp_file = os.path.join(wiki_page_dir(release), 'last.rev')
-            assert_equal(read_file(wp_file), 'wiki content')
-
-
-    def test_configured_p_no(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            configured = configured_p()
-            assert_equal(configured, False)
-
-
-    def test_configured_p_yes(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
-            c_path = config_dir()
-            c_file = config_file()
-
-            open(c_file, 'w').close()
-
-            configured = configured_p()
-            assert_equal(configured, True)
-
-
-    def test_configure(self):
-        def env(e):
-            return self.test_home
-
-        inputs = ['usrnm', 'weasaspeciesrfckd']
-        def mock_input(p):
-            return inputs.pop(0)
-
-        with mock.patch('os.getenv', new=env), \
-             mock.patch('builtins.input', new=mock_input):
-            configure()
-
-            # read config file
-            config = json.load(open(config_file(), 'r'))
-
-            # tests
-            assert_equal(config['user'], 'usrnm')
-            assert_equal(config['pass'], 'weasaspeciesrfckd')
-            assert_equal(oct(os.stat(config_file()).st_mode), '0o100600')
 
 
     def teardown(self):

@@ -6,6 +6,7 @@
 #  gns-deb-diff is under the Public Domain. See
 #  <https://creativecommons.org/publicdomain/zero/1.0>
 
+import argparse
 import json
 import os
 import re
@@ -18,6 +19,8 @@ from os import path
 from subprocess import run, PIPE
 
 from bs4 import BeautifulSoup
+
+_version = '0.1.0dev0'
 
 # list of recognized fields.
 field_list = [
@@ -114,6 +117,123 @@ def get_packages(release):
     return pkgs
 
 
+def config_dir():
+    """Return the gns-deb-diff config directory.
+
+    As a side effect, the directory is created if it does not exist.
+
+    """
+    cd = os.path.join(os.getenv('HOME'), '.config', 'gns-deb-diff')
+
+    if not os.path.isdir(cd):
+        os.makedirs(cd)
+
+    return cd
+
+
+def config_file():
+    return os.path.join(config_dir(), 'config')
+
+
+def read_config_file():
+    """Return config as a Python Object; False when config does not \
+    exist.
+
+    """
+    cf = config_file()
+
+    if not os.path.isfile(cf):
+        return False
+
+    return json.load(open(cf, 'r'))
+
+
+def pkgs_dir():
+    """Return the `pkgs` directory.
+
+    As a side effect, the directory is created if it does not exist.
+    """
+    pd = os.path.join(config_dir(), 'pkgs')
+    if not os.path.isdir(pd):
+        os.mkdir(pd)
+
+    return pd
+
+
+def mk_pkgs_list(release):
+    """Get pkgs for release and write to disk.
+
+    It gets written to `~/.config/pkgs/release`.
+
+    """
+    pkgs = get_packages(release)
+    pkgs_file = os.path.join(pkgs_dir(), release)
+    write_file(pkgs_file, pkgs)
+
+    return pkgs_file
+
+
+def readmes_dir(release):
+    """Return readmes directory for `release`.
+
+    As a side effect, the directory is created if it does not exist.
+    """
+    rd = os.path.join(config_dir(), 'readmes')
+    if not os.path.isdir(rd):
+        os.mkdir(rd)
+
+    rd_release = os.path.join(rd, release)
+    if not os.path.isdir(rd_release):
+        os.mkdir(rd_release)
+
+    return rd_release
+
+
+def wiki_page_dir(release):
+    """Get wiki page directory for `release`.
+    """
+    wd = os.path.join(config_dir(), 'wiki-page')
+
+    if not os.path.isdir(wd):
+        os.mkdir(wd)
+
+    wd_release = os.path.join(wd, release)
+    if not os.path.isdir(wd_release):
+        os.mkdir(wd_release)
+
+    return wd_release
+
+
+def write_wiki_page(release, content):
+    """Write wiki page `content` to `release`' last.rev file.
+
+    """
+    wd_release = wiki_page_dir(release)
+    wp_file = os.path.join(wd_release, 'last.rev')
+    write_file(wp_file, content)
+
+
+def configured_p():
+    """Returns True if gns-deb-diff is configured; False otherwise.
+    """
+    if os.path.isfile(config_file()):
+        return True
+    else:
+        return False
+
+
+def configure():
+    """Configure gns-deb-diff.
+    """
+    # prompt username and password.
+    config = {}
+    config['user'] = input('gNewSense wiki username: ')
+    config['pass'] = input('gNewSense wiki password: ')
+
+    json.dump(config, open(config_file(), 'w'))
+    os.chmod(config_file(), mode=0o600)
+
+
 def save_gns_readme(content, release, pkg):
     """Save README.gNewsense locally.
 
@@ -208,119 +328,3 @@ def slurp_fields_from_readme(content):
             field_values[field] = None
 
     return field_values
-
-
-def config_dir():
-    """Return the gns-deb-diff config directory.
-
-    As a side effect, the directory is created if it does not exist.
-
-    """
-    cd = os.path.join(os.getenv('HOME'), '.config', 'gns-deb-diff')
-
-    if not os.path.isdir(cd):
-        os.makedirs(cd)
-
-    return cd
-
-
-def config_file():
-    return os.path.join(config_dir(), 'config')
-
-
-def read_config_file():
-    """Return config as a Python Object; False when config does not \
-    exist.
-
-    """
-    cf = config_file()
-
-    if not os.path.isfile(cf):
-        return False
-
-    return json.load(open(cf, 'r'))
-
-
-def pkgs_dir():
-    """Return the `pkgs` directory.
-
-    As a side effect, the directory is created if it does not exist.
-    """
-    pd = os.path.join(config_dir(), 'pkgs')
-    if not os.path.isdir(pd):
-        os.mkdir(pd)
-
-    return pd
-
-
-def mk_pkgs_list(release):
-    """Get pkgs for release and write to disk.
-
-    It gets written to `~/.config/pkgs/release`.
-
-    """
-    pkgs = get_packages(release)
-    pkgs_file = os.path.join(pkgs_dir(), release)
-    write_file(pkgs_file, pkgs)
-
-    return pkgs_file
-
-def readmes_dir(release):
-    """Return readmes directory for `release`.
-
-    As a side effect, the directory is created if it does not exist.
-    """
-    rd = os.path.join(config_dir(), 'readmes')
-    if not os.path.isdir(rd):
-        os.mkdir(rd)
-
-    rd_release = os.path.join(rd, release)
-    if not os.path.isdir(rd_release):
-        os.mkdir(rd_release)
-
-    return rd_release
-
-
-def wiki_page_dir(release):
-    """Get wiki page directory for `release`.
-    """
-    wd = os.path.join(config_dir(), 'wiki-page')
-
-    if not os.path.isdir(wd):
-        os.mkdir(wd)
-
-    wd_release = os.path.join(wd, release)
-    if not os.path.isdir(wd_release):
-        os.mkdir(wd_release)
-
-    return wd_release
-
-
-def write_wiki_page(release, content):
-    """Write wiki page `content` to `release`' last.rev file.
-
-    """
-    wd_release = wiki_page_dir(release)
-    wp_file = os.path.join(wd_release, 'last.rev')
-    write_file(wp_file, content)
-
-
-def configured_p():
-    """Returns True if gns-deb-diff is configured; False otherwise.
-    """
-    if os.path.isfile(config_file()):
-        return True
-    else:
-        return False
-
-
-def configure():
-    """Configure gns-deb-diff.
-    """
-    # prompt username and password.
-    config = {}
-    config['user'] = input('gNewSense wiki username: ')
-    config['pass'] = input('gNewSense wiki password: ')
-
-    json.dump(config, open(config_file(), 'w'))
-    os.chmod(config_file(), mode=0o600)
