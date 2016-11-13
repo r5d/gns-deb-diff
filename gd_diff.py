@@ -241,6 +241,17 @@ def pkgs_dir():
     return pd
 
 
+def mk_pkgs_list(release):
+    """Get pkgs for release and write to disk.
+
+    It gets written to `~/.config/pkgs/release`.
+
+    """
+    pkgs = get_packages(release)
+    pkgs_file = os.path.join(pkgs_dir(), release)
+    write_file(pkgs_file, pkgs)
+
+
 def readmes_dir(release):
     """Return readmes directory for `release`.
 

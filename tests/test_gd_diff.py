@@ -258,6 +258,17 @@ class TestGdDiff(object):
             assert_equal(os.path.isdir(pd), True)
 
 
+    def test_mk_pkgs_list(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            mk_pkgs_list('parkes')
+            # test
+            pkgs_file = os.path.join(pkgs_dir(), 'parkes')
+            assert_equal(read_file(pkgs_file), 'antlr\napt\napt-setup\nautoconf\nautoconf2.59\nautoconf2.64\nbacula\nbase-files\nbase-installer\nbatik\ncairomm\ncdebootstrap\ncfitsio3\nchoose-mirror\nclaws-mail\ndb4.6\ndb4.7\ndb4.8\ndebian-cd\ndebian-edu\ndebian-installer\ndebian-installer-launcher\ndebootstrap\ndesktop-base\ndoc-linux\ndoc-linux-hr\ndoc-linux-it\ndoc-linux-ja\ndoc-linux-pl\nenscript\nepiphany-browser\nfop\nfreetype\ngalaxia\ngdm3\nglibmm2.4\ngnewsense-archive-keyring\ngnome-desktop\ngtkmm2.4\nicedove\niceweasel\nkde4libs\nkdebase\nkdebase-workspace\nkdenetwork\nkernel-wedge\nlensfun\nliferea\nlintian\nlinux-2.6\nlinux-kernel-di-amd64-2.6\nlinux-kernel-di-i386-2.6\nlinux-latest-2.6\nlive-build\nlive-config\nmeta-gnome2\nmplayer\nnet-retriever\nobjcryst-fox\nopenbox-themes\nopenjdk-6\nopenoffice.org\npangomm\nperl-tk\npkgsel\npopularity-contest\npsutils\npython-apt\nscreenlets\nsip4-qt3\nsoftware-center\ntcl8.4\ntcl8.5\ntexlive-extra\ntk8.4\ntk8.5\nupdate-manager\nvim\nwmaker\nxchat\nxdm\nxorg-server\nxserver-xorg-video-siliconmotion\nyeeloong-base\n')
+
+
     def test_readmes_dir(self):
         def env(e):
             return self.test_home
