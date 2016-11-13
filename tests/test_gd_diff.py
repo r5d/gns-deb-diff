@@ -270,6 +270,18 @@ class TestGdDiff(object):
             assert_equal(os.path.isdir(rd_parkes), True)
 
 
+    def test_wiki_page_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            wd_parkes = wiki_page_dir('parkes')
+            assert_equal(wd_parkes, os.path.join(self.test_home, '.config',
+                                                 'gns-deb-diff', 'wiki-page',
+                                                 'parkes'))
+            assert_equal(os.path.isdir(wd_parkes), True)
+
+
     def test_configured_p_no(self):
         def env(e):
             return self.test_home

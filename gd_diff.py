@@ -257,6 +257,21 @@ def readmes_dir(release):
     return rd_release
 
 
+def wiki_page_dir(release):
+    """Get wiki page directory for `release`.
+    """
+    wd = os.path.join(config_dir(), 'wiki-page')
+
+    if not os.path.isdir(wd):
+        os.mkdir(wd)
+
+    wd_release = os.path.join(wd, release)
+    if not os.path.isdir(wd_release):
+        os.mkdir(wd_release)
+
+    return wd_release
+
+
 def configured_p():
     """Returns True if gns-deb-diff is configured; False otherwise.
     """
