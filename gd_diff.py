@@ -209,3 +209,7 @@ def slurp_fields_from_readme(content):
             field_values[field] = None
 
     return field_values
+
+
+def config_dir():
+    return os.path.join(os.getenv('HOME'), '.config', 'gns-deb-diff')
