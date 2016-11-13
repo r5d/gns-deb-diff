@@ -241,6 +241,22 @@ def pkgs_dir():
     return pd
 
 
+def readmes_dir(release):
+    """Return readmes directory for `release`.
+
+    As a side effect, the directory is created if it does not exist.
+    """
+    rd = os.path.join(config_dir(), 'readmes')
+    if not os.path.isdir(rd):
+        os.mkdir(rd)
+
+    rd_release = os.path.join(rd, release)
+    if not os.path.isdir(rd_release):
+        os.mkdir(rd_release)
+
+    return rd_release
+
+
 def configured_p():
     """Returns True if gns-deb-diff is configured; False otherwise.
     """

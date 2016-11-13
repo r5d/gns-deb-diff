@@ -258,6 +258,18 @@ class TestGdDiff(object):
             assert_equal(os.path.isdir(pd), True)
 
 
+    def test_readmes_dir(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            rd_parkes = readmes_dir('parkes')
+            assert_equal(rd_parkes, os.path.join(self.test_home, '.config',
+                                                 'gns-deb-diff', 'readmes',
+                                                 'parkes'))
+            assert_equal(os.path.isdir(rd_parkes), True)
+
+
     def test_configured_p_no(self):
         def env(e):
             return self.test_home
