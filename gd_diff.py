@@ -217,3 +217,12 @@ def config_dir():
 
 def config_file():
     return os.path.join(config_dir(), 'config')
+
+
+def configured_p():
+    """Returns True if gns-deb-diff is configured; False otherwise.
+    """
+    if os.path.isfile(config_file()):
+        return True
+    else:
+        return False
