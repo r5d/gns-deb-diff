@@ -212,7 +212,17 @@ def slurp_fields_from_readme(content):
 
 
 def config_dir():
-    return os.path.join(os.getenv('HOME'), '.config', 'gns-deb-diff')
+    """Return the gns-deb-diff config directory.
+
+    As a side effect, the directory is created if it does not exist.
+
+    """
+    cd = os.path.join(os.getenv('HOME'), '.config', 'gns-deb-diff')
+
+    if not os.path.isdir(cd):
+        os.makedirs(cd)
+
+    return cd
 
 
 def config_file():

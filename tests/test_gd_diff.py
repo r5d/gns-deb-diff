@@ -234,6 +234,7 @@ class TestGdDiff(object):
             c_dir = config_dir()
             assert_equal(c_dir, os.path.join(self.test_home,
                                              '.config', 'gns-deb-diff'))
+            assert_equal(os.path.isdir(c_dir), True)
 
 
     def test_config_file(self):
@@ -263,7 +264,6 @@ class TestGdDiff(object):
             c_path = config_dir()
             c_file = config_file()
 
-            os.makedirs(c_path)
             open(c_file, 'w').close()
 
             configured = configured_p()
