@@ -236,6 +236,16 @@ class TestGdDiff(object):
                                              '.config', 'gns-deb-diff'))
 
 
+    def test_config_file(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            c_file = config_file()
+            assert_equal(c_file, os.path.join(self.test_home, '.config',
+                                             'gns-deb-diff', 'config'))
+
+
     def teardown(self):
         """Teardown method for this class."""
         if(path.exists(self.gns_pkgs_dir)):
