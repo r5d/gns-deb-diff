@@ -265,6 +265,7 @@ def mk_pkgs_list(release):
     pkgs_file = os.path.join(pkgs_dir(), release)
     write_file(pkgs_file, pkgs)
 
+    return pkgs_file
 
 def readmes_dir(release):
     """Return readmes directory for `release`.
