@@ -104,84 +104,107 @@ class TestGdDiff(object):
 
 
     def test_save_gns_readme(self):
-        cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
-        cp = execute(cmd, out=subprocess.PIPE)
-        readme_content = cp.stdout.decode() # convert to str
+        def env(e):
+            return self.test_home
 
-        # save it
-        save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+        with mock.patch('os.getenv', new=env):
+            cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
+            cp = execute(cmd, out=subprocess.PIPE)
+            readme_content = cp.stdout.decode() # convert to str
 
-        gns_readme_file = path.join(self.gns_pkgs_dir, 'parkes', 'antlr', 'debian', 'README.gNewSense')
-        with open(gns_readme_file, 'rb') as f:
-            assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+            # save it
+            save_gns_readme(readme_content, 'parkes', 'antlr')
+
+            gns_readme_file = path.join(self.test_home, '.config',
+                                        'gns-deb-diff', 'readmes',
+                                        'parkes', 'antlr', 'debian',
+                                        'README.gNewSense')
+            with open(gns_readme_file, 'rb') as f:
+                assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
 
 
     def test_save_gns_readme_double(self):
-        cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
-        cp = execute(cmd, out=subprocess.PIPE)
-        readme_content = cp.stdout.decode() # convert to str
+        def env(e):
+            return self.test_home
 
-        # save it twice
-        save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
-        save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+        with mock.patch('os.getenv', new=env):
+            cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
+            cp = execute(cmd, out=subprocess.PIPE)
+            readme_content = cp.stdout.decode() # convert to str
 
-        gns_readme_file = path.join(self.gns_pkgs_dir, 'parkes', 'antlr', 'debian', 'README.gNewSense')
-        with open(gns_readme_file, 'rb') as f:
-            assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+            # save it twice
+            save_gns_readme(readme_content, 'parkes', 'antlr')
+            save_gns_readme(readme_content, 'parkes', 'antlr')
 
-    @raises(SystemExit)
-    def test_save_gns_readme_error(self):
-        os.mkdir(self.gns_pkgs_dir, mode=0o500)
-
-        # must error out
-        readme_content = 'lorem ipsum'
-        with open(os.devnull, 'w') as sys.stderr:
-            save_gns_readme(readme_content, 'parkes', 'antlr', self.gns_pkgs_dir)
+            gns_readme_file = path.join(self.test_home, '.config',
+                                        'gns-deb-diff', 'readmes',
+                                        'parkes', 'antlr', 'debian',
+                                        'README.gNewSense')
+            with open(gns_readme_file, 'rb') as f:
+                assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
 
 
     def test_slurp_gns_readme_success(self):
-        saved = slurp_gns_readme('parkes', 'antlr', self.gns_pkgs_dir)
-        assert saved == True
+        def env(e):
+            return self.test_home
 
-        gns_readme_file = path.join(self.gns_pkgs_dir, 'parkes',
-                                    'antlr', 'debian',
-                                    'README.gNewSense')
-        with open(gns_readme_file, 'rb') as f:
-            assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+        with mock.patch('os.getenv', new=env):
+            saved = slurp_gns_readme('parkes', 'antlr')
+            assert saved == True
+
+            gns_readme_file = path.join(self.test_home, '.config',
+                                        'gns-deb-diff', 'readmes',
+                                        'parkes', 'antlr', 'debian',
+                                        'README.gNewSense')
+            with open(gns_readme_file, 'rb') as f:
+                assert f.read() == b'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
 
 
     def test_slurp_gns_readme_error(self):
-        saved = slurp_gns_readme('parkes', 'non-existent-pkg', self.gns_pkgs_dir)
-        assert saved == False
+        def env(e):
+            return self.test_home
 
-        gns_readme_file = path.join(self.gns_pkgs_dir, 'parkes',
-                                    'non-existent-pkg', 'debian',
-                                    'README.gNewSense')
-        assert not path.exists(gns_readme_file)
+        with mock.patch('os.getenv', new=env):
+            saved = slurp_gns_readme('parkes', 'non-existent-pkg')
+            assert saved == False
+
+            gns_readme_file = path.join(self.test_home, '.config',
+                                        'gns-deb-diff', 'readmes',
+                                        'parkes', 'non-existent-pkg',
+                                        'debian', 'README.gNewSense')
+            assert not path.exists(gns_readme_file)
 
 
     def test_slurp_all_gns_readmes(self):
-        pkgs = read_packages(self.small_pkgs_file)
+        def env(e):
+            return self.test_home
 
-        # expected packages with no readmes
-        expected_pkgs_noreadmes = [
-            'pkg-with-no-readme',
-            'another-pkgs-no-readme',
-        ]
+        with mock.patch('os.getenv', new=env):
+            pkgs = read_packages(self.small_pkgs_file)
 
-        pkgs_noreadmes = slurp_all_gns_readmes('parkes', pkgs, self.gns_pkgs_dir)
-        assert_equal(pkgs_noreadmes, expected_pkgs_noreadmes)
+            # expected packages with no readmes
+            expected_pkgs_noreadmes = [
+                'pkg-with-no-readme',
+                'another-pkgs-no-readme',
+            ]
+
+            pkgs_noreadmes = slurp_all_gns_readmes('parkes', pkgs)
+            assert_equal(pkgs_noreadmes, expected_pkgs_noreadmes)
 
 
     def test_read_gns_readme(self):
         # first download the antlr readme
-        saved = slurp_gns_readme('parkes', 'antlr', self.gns_pkgs_dir)
+        saved = slurp_gns_readme('parkes', 'antlr')
         assert saved
 
-        antlr_readme_content = read_gns_readme('parkes', 'antlr', self.gns_pkgs_dir)
+        antlr_readme_content = read_gns_readme('parkes', 'antlr')
         expected_antlr_readme_content = 'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
-
         assert_equal(antlr_readme_content, expected_antlr_readme_content)
+
+
+    def test_read_gns_readme_none(self):
+        readme_content = read_gns_readme('parkes', 'non-existent-pkg')
+        assert_equal(readme_content, None)
 
 
     def test_slurp_fields_from_readme(self):

@@ -114,7 +114,7 @@ def get_packages(release):
     return pkgs
 
 
-def save_gns_readme(content, release, pkg, local_dir):
+def save_gns_readme(content, release, pkg):
     """Save README.gNewsense locally.
 
     :param str content:
@@ -123,11 +123,9 @@ def save_gns_readme(content, release, pkg, local_dir):
         Release name.
     :param str pkg:
         Package name.
-    :param str local_dir:
-        Root directory under which readme of all packages get stored.
     """
     # create gns_readme dir. for pkg.
-    gns_readme_dir = path.join(local_dir, release, pkg, 'debian')
+    gns_readme_dir = path.join(readmes_dir(release), pkg, 'debian')
 
     try:
         os.makedirs(gns_readme_dir, exist_ok=True)
@@ -141,17 +139,16 @@ def save_gns_readme(content, release, pkg, local_dir):
     print('Saved {}'.format(gns_readme))
 
 
-def slurp_gns_readme(release, pkg, local_dir):
+def slurp_gns_readme(release, pkg):
     """Read and save the README.gNewSense for `pkg` in `release`.
 
-    The README.gNewSense file gets save at `local_dir`/`release`/`pkg`/debian/
     """
     readme_url = readme_url_fmt.format(release, pkg)
     cmd = 'bzr cat {}'.format(readme_url)
     cp = execute(cmd, out=PIPE, err=PIPE)
 
     if(cp.returncode == 0):
-        save_gns_readme(cp.stdout.decode(), release, pkg, local_dir)
+        save_gns_readme(cp.stdout.decode(), release, pkg)
         return True
     else:
         print("README.gNewSense not found for package {}".format(pkg),
@@ -159,16 +156,14 @@ def slurp_gns_readme(release, pkg, local_dir):
         return False
 
 
-def slurp_all_gns_readmes(release, pkgs, local_dir):
+def slurp_all_gns_readmes(release, pkgs):
     """Read and save all README.gNewSense for `pkgs` in `release`.
-
-    The README.gNewSense files gets saved under `local_dir`/`release`
 
     Returns list of packages in `pkgs` that does not have README.gNewSense.
     """
     pkgs_noreadmes = []
     for pkg in pkgs:
-        slurped = slurp_gns_readme(release, pkg, local_dir)
+        slurped = slurp_gns_readme(release, pkg)
 
         if(not slurped):
             pkgs_noreadmes.append(pkg)
@@ -176,16 +171,19 @@ def slurp_all_gns_readmes(release, pkgs, local_dir):
     return pkgs_noreadmes
 
 
-def read_gns_readme(release, pkg, local_dir):
+def read_gns_readme(release, pkg):
     """Returns content of README.gNewSense for `pkg`.
 
     If `README.gNewSense` does not exists for `pkg`, None is returned.
 
     """
-    readme_path = path.join(local_dir, release, pkg, 'debian',
+    readme_path = path.join(readmes_dir(release), pkg, 'debian',
                             'README.gNewSense')
-    readme_content = read_file(readme_path)
 
+    if not path.isfile(readme_path):
+        return None
+
+    readme_content = read_file(readme_path)
     return readme_content
 
 
