@@ -293,6 +293,17 @@ class TestGdDiff(object):
             assert_equal(os.path.isdir(wd_parkes), True)
 
 
+    def test_write_wiki_page(self):
+        def env(e):
+            return self.test_home
+
+        with mock.patch('os.getenv', new=env):
+            release = 'parkes'
+            write_wiki_page(release, 'wiki content')
+            wp_file = os.path.join(wiki_page_dir(release), 'last.rev')
+            assert_equal(read_file(wp_file), 'wiki content')
+
+
     def test_configured_p_no(self):
         def env(e):
             return self.test_home
