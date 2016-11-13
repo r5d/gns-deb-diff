@@ -38,6 +38,8 @@ class TestGdDiff(object):
         # make test home
         os.mkdir(self.test_home, mode=0o700)
 
+        self.env_func = lambda e: self.test_home
+
 
     def test_read_file_success(self):
         f_content = read_file(self.pkgs_file)
@@ -67,6 +69,7 @@ class TestGdDiff(object):
         assert cp.stdout.split()[0] == b'Python'
         assert cp.stdout.split()[1].startswith(b'3.5')
 
+
     def test_execute_cmderror(self):
         cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/nonexistent-packages/debian/README.gNewSense'
         cp = execute(cmd, err=subprocess.PIPE)
@@ -86,11 +89,13 @@ class TestGdDiff(object):
         pkgs_iter = read_packages(self.pkgs_file)
         assert len(list(pkgs_iter)) == 82
 
+
     def test_read_packages_sanity(self):
         pkgs_iter = read_packages(self.pkgs_file)
 
         for pkg in pkgs_iter:
             assert not ' ' in pkg
+
 
     @raises(SystemExit)
     def test_get_packages_error(self):
@@ -104,10 +109,7 @@ class TestGdDiff(object):
 
 
     def test_config_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             c_dir = config_dir()
             assert_equal(c_dir, os.path.join(self.test_home,
                                              '.config', 'gns-deb-diff'))
@@ -115,10 +117,7 @@ class TestGdDiff(object):
 
 
     def test_config_file(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             c_file = config_file()
             assert_equal(c_file, os.path.join(self.test_home, '.config',
                                              'gns-deb-diff', 'config'))
@@ -130,10 +129,7 @@ class TestGdDiff(object):
 
 
     def test_read_config_file_success(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             c_file = config_file()
 
             # first write sample config file.
@@ -147,10 +143,7 @@ class TestGdDiff(object):
 
 
     def test_pkgs_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             pd = pkgs_dir()
             assert_equal(pd, os.path.join(self.test_home, '.config',
                                           'gns-deb-diff', 'pkgs'))
@@ -158,20 +151,14 @@ class TestGdDiff(object):
 
 
     def test_mk_pkgs_list(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             pkgs_file = mk_pkgs_list('parkes')
             # test
             assert_equal(read_file(pkgs_file), 'antlr\napt\napt-setup\nautoconf\nautoconf2.59\nautoconf2.64\nbacula\nbase-files\nbase-installer\nbatik\ncairomm\ncdebootstrap\ncfitsio3\nchoose-mirror\nclaws-mail\ndb4.6\ndb4.7\ndb4.8\ndebian-cd\ndebian-edu\ndebian-installer\ndebian-installer-launcher\ndebootstrap\ndesktop-base\ndoc-linux\ndoc-linux-hr\ndoc-linux-it\ndoc-linux-ja\ndoc-linux-pl\nenscript\nepiphany-browser\nfop\nfreetype\ngalaxia\ngdm3\nglibmm2.4\ngnewsense-archive-keyring\ngnome-desktop\ngtkmm2.4\nicedove\niceweasel\nkde4libs\nkdebase\nkdebase-workspace\nkdenetwork\nkernel-wedge\nlensfun\nliferea\nlintian\nlinux-2.6\nlinux-kernel-di-amd64-2.6\nlinux-kernel-di-i386-2.6\nlinux-latest-2.6\nlive-build\nlive-config\nmeta-gnome2\nmplayer\nnet-retriever\nobjcryst-fox\nopenbox-themes\nopenjdk-6\nopenoffice.org\npangomm\nperl-tk\npkgsel\npopularity-contest\npsutils\npython-apt\nscreenlets\nsip4-qt3\nsoftware-center\ntcl8.4\ntcl8.5\ntexlive-extra\ntk8.4\ntk8.5\nupdate-manager\nvim\nwmaker\nxchat\nxdm\nxorg-server\nxserver-xorg-video-siliconmotion\nyeeloong-base\n')
 
 
     def test_readmes_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             rd_parkes = readmes_dir('parkes')
             assert_equal(rd_parkes, os.path.join(self.test_home, '.config',
                                                  'gns-deb-diff', 'readmes',
@@ -180,10 +167,7 @@ class TestGdDiff(object):
 
 
     def test_wiki_page_dir(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             wd_parkes = wiki_page_dir('parkes')
             assert_equal(wd_parkes, os.path.join(self.test_home, '.config',
                                                  'gns-deb-diff', 'wiki-page',
@@ -192,10 +176,7 @@ class TestGdDiff(object):
 
 
     def test_write_wiki_page(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             release = 'parkes'
             write_wiki_page(release, 'wiki content')
             wp_file = os.path.join(wiki_page_dir(release), 'last.rev')
@@ -203,19 +184,13 @@ class TestGdDiff(object):
 
 
     def test_configured_p_no(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             configured = configured_p()
             assert_equal(configured, False)
 
 
     def test_configured_p_yes(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             c_path = config_dir()
             c_file = config_file()
 
@@ -226,14 +201,11 @@ class TestGdDiff(object):
 
 
     def test_configure(self):
-        def env(e):
-            return self.test_home
-
         inputs = ['usrnm', 'weasaspeciesrfckd']
         def mock_input(p):
             return inputs.pop(0)
 
-        with mock.patch('os.getenv', new=env), \
+        with mock.patch('os.getenv', new=self.env_func), \
              mock.patch('builtins.input', new=mock_input):
             configure()
 
@@ -247,10 +219,7 @@ class TestGdDiff(object):
 
 
     def test_save_gns_readme(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
             cp = execute(cmd, out=subprocess.PIPE)
             readme_content = cp.stdout.decode() # convert to str
@@ -267,10 +236,7 @@ class TestGdDiff(object):
 
 
     def test_save_gns_readme_double(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             cmd = 'bzr cat bzr://bzr.sv.gnu.org/gnewsense/packages-parkes/antlr/debian/README.gNewSense'
             cp = execute(cmd, out=subprocess.PIPE)
             readme_content = cp.stdout.decode() # convert to str
@@ -288,10 +254,7 @@ class TestGdDiff(object):
 
 
     def test_slurp_gns_readme_success(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             saved = slurp_gns_readme('parkes', 'antlr')
             assert saved == True
 
@@ -304,10 +267,7 @@ class TestGdDiff(object):
 
 
     def test_slurp_gns_readme_error(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             saved = slurp_gns_readme('parkes', 'non-existent-pkg')
             assert saved == False
 
@@ -319,10 +279,7 @@ class TestGdDiff(object):
 
 
     def test_slurp_all_gns_readmes(self):
-        def env(e):
-            return self.test_home
-
-        with mock.patch('os.getenv', new=env):
+        with mock.patch('os.getenv', new=self.env_func):
             pkgs = read_packages(self.small_pkgs_file)
 
             # expected packages with no readmes
