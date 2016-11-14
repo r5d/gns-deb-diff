@@ -79,14 +79,14 @@ def execute(cmd, out=None, err=None):
 
 
 def read_packages(pkgs_file):
-    """Return an iterator contaning of package names from `pkgs_file`.
+    """Return list contaning of package names from `pkgs_file`.
 
     """
     pkgs = read_file(pkgs_file).split('\n')
     # sanitize
     pkgs_iter = map(lambda x: x.strip(), pkgs)
 
-    return pkgs_iter
+    return list(pkgs_iter)
 
 
 def get_packages(release):

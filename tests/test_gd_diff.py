@@ -86,14 +86,14 @@ class TestGdDiff(object):
 
 
     def test_read_packages(self):
-        pkgs_iter = read_packages(self.pkgs_file)
-        assert len(list(pkgs_iter)) == 82
+        pkgs = read_packages(self.pkgs_file)
+        assert len(pkgs) == 82
 
 
     def test_read_packages_sanity(self):
-        pkgs_iter = read_packages(self.pkgs_file)
+        pkgs = read_packages(self.pkgs_file)
 
-        for pkg in pkgs_iter:
+        for pkg in pkgs:
             assert not ' ' in pkg
 
 
