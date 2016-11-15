@@ -30,6 +30,7 @@ field_list = [
 
 # bzr
 bzr_base_url = 'bzr://bzr.savannah.gnu.org/gnewsense/'
+bzr_pkg_readme_fmt = 'http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/{}/annotate/head:/debian/README.gNewSense'
 readme_url_fmt = '%s/packages-{}/{}/debian/README.gNewSense' % bzr_base_url
 
 
@@ -349,3 +350,18 @@ def get_wiki_page_data(release):
             table_data[pkg] = slurp_fields_from_readme(readme_content)
 
     return pkgs_noreadmes, table_data
+
+
+def construct_table_row(pkg, change, reason):
+    """Return a table row in moinmoin wiki markup.
+
+    """
+    if change is None:
+        change = ' '
+    if reason is None:
+        reason = ' '
+
+    more_info_link = bzr_pkg_readme_fmt.format(pkg)
+
+    return '||{}||{}||{}||[[{}|more_info]]'.format(pkg, change, reason,
+                                                   more_info_link)

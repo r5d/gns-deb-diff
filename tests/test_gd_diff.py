@@ -375,6 +375,39 @@ class TestGdDiff(object):
                     assert (type(value) == str or
                             value is None)
 
+    def test_construct_table_row(self):
+        row = construct_table_row('antlr', 'Modified',
+                                  'Removed example with non-free files')
+        columns = row.split('||')[1:]
+        assert_equal(columns[0], 'antlr')
+        assert_equal(columns[1], 'Modified')
+        assert_equal(columns[2], 'Removed example with non-free files')
+        assert_equal(columns[3] , '[[http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/antlr/annotate/head:/debian/README.gNewSense|more_info]]')
+
+        row = construct_table_row('antlr', None,
+                                  'Removed example with non-free files')
+        columns = row.split('||')[1:]
+        assert_equal(columns[0], 'antlr')
+        assert_equal(columns[1], ' ')
+        assert_equal(columns[2], 'Removed example with non-free files')
+        assert_equal(columns[3] , '[[http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/antlr/annotate/head:/debian/README.gNewSense|more_info]]')
+
+        row = construct_table_row('antlr', 'Modified',
+                                  None)
+        columns = row.split('||')[1:]
+        assert_equal(columns[0], 'antlr')
+        assert_equal(columns[1], 'Modified')
+        assert_equal(columns[2], ' ')
+        assert_equal(columns[3] , '[[http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/antlr/annotate/head:/debian/README.gNewSense|more_info]]')
+
+        row = construct_table_row('antlr', None,
+                                  None)
+        columns = row.split('||')[1:]
+        assert_equal(columns[0], 'antlr')
+        assert_equal(columns[1], ' ')
+        assert_equal(columns[2], ' ')
+        assert_equal(columns[3] , '[[http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/antlr/annotate/head:/debian/README.gNewSense|more_info]]')
+
 
     def teardown(self):
         """Teardown method for this class."""
