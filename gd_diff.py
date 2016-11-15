@@ -328,3 +328,24 @@ def slurp_fields_from_readme(content):
             field_values[field] = None
 
     return field_values
+
+
+def get_wiki_page_data(release):
+    """Returns data needed to generate the gNewSense Debian Diff table.
+
+    """
+    # get packages for release.
+    pkgs_file = mk_pkgs_list(release)
+    pkgs = read_packages(pkgs_file)
+
+    # get readmes for release.
+    pkgs_noreadmes = slurp_all_gns_readmes(release, pkgs)
+
+    # go through each pkg's readme and slurp the fields.
+    table_data = {}
+    for pkg in pkgs:
+        readme_content = read_gns_readme(release, pkg)
+        if readme_content:
+            table_data[pkg] = slurp_fields_from_readme(readme_content)
+
+    return pkgs_noreadmes, table_data

@@ -12,6 +12,8 @@ import os
 import subprocess
 import sys
 
+import gd_diff
+
 from io import StringIO
 from os import path
 from shutil import rmtree
@@ -349,6 +351,29 @@ class TestGdDiff(object):
         assert_equal(field_values['Change-Type'], 'Modified')
         assert_equal(field_values['Changed-From-Debian'],
                      'Removed example with non-free files.')
+
+
+    def test_get_wiki_page_data(self):
+        def mock_mk_pkgs_list(r):
+            return self.small_pkgs_file
+
+        pkgs = [p.strip()
+                for p in open(self.small_pkgs_file, 'r').read() \
+                .split('\n')]
+
+        with mock.patch('os.getenv', new=self.env_func), \
+             mock.patch('gd_diff.mk_pkgs_list', new=mock_mk_pkgs_list):
+            pkgs_noreadmes, table_data = get_wiki_page_data('parkes')
+
+            for pkg in pkgs_noreadmes:
+                assert pkg in ['pkg-with-no-readme', 'another-pkg-no-readme']
+
+            for pkg, field_values in table_data.items():
+                assert pkg in pkgs
+                for field, value in field_values.items():
+                    assert field in gd_diff.field_list
+                    assert (type(value) == str or
+                            value is None)
 
 
     def teardown(self):
