@@ -24,8 +24,8 @@ _version = '0.1.0dev0'
 
 # list of recognized fields.
 field_list = [
-    "Change-Type",
-    "Changed-From-Debian",
+    'Change-Type',
+    'Changed-From-Debian',
 ]
 
 # bzr
