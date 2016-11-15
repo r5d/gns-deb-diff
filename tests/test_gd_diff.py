@@ -287,7 +287,7 @@ class TestGdDiff(object):
             # expected packages with no readmes
             expected_pkgs_noreadmes = [
                 'pkg-with-no-readme',
-                'another-pkgs-no-readme',
+                'another-pkg-no-readme',
             ]
 
             pkgs_noreadmes = slurp_all_gns_readmes('parkes', pkgs)
