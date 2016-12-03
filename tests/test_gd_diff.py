@@ -30,6 +30,7 @@ class TestGdDiff(object):
         """Setup method for this class."""
         self.pkgs_file = 'tests/files/parkes-pkgs.list'
         self.small_pkgs_file = 'tests/files/small-parkes-pkgs.list'
+        self.tiny_pkgs_file = 'tests/files/tiny-parkes-pkgs.list'
         self.pkgs_file_ne = 'tests/nonexistent-file.list'
         self.gns_pkgs_dir = 'tests/gns-pkgs'
         self.test_home = 'tests/HOME'
@@ -407,6 +408,39 @@ class TestGdDiff(object):
         assert_equal(columns[1], ' ')
         assert_equal(columns[2], ' ')
         assert_equal(columns[3] , '[[http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/antlr/annotate/head:/debian/README.gNewSense|more_info]]')
+
+
+    def test_generate_wiki_table(self):
+        def mock_mk_pkgs_list(r):
+            return self.tiny_pkgs_file
+
+        pkgs = [p.strip()
+                for p in open(self.tiny_pkgs_file, 'r').read() \
+                .split('\n')]
+
+        expected_pkgs_noreadmes = ['pkg-with-no-readme',
+                                   'another-pkg-no-readme']
+
+        with mock.patch('os.getenv', new=self.env_func), \
+             mock.patch('gd_diff.mk_pkgs_list', new=mock_mk_pkgs_list):
+            pkgs_noreadmes, wiki_page = generate_wiki_table('parkes')
+
+            for pkg in pkgs_noreadmes:
+                assert pkg in expected_pkgs_noreadmes
+
+            pkgs = set(pkgs) - set(expected_pkgs_noreadmes)
+
+            for row in wiki_page.split('\n')[:-1]:
+                cols = row.split('||')[1:]
+                pkg = cols[0]
+
+                assert pkg in pkgs
+                assert cols[3] == '[[{}|more_info]]'.format(
+                    bzr_pkg_readme_fmt.format(pkg))
+
+                pkgs.remove(pkg)
+
+            assert len(pkgs) == 0
 
 
     def teardown(self):

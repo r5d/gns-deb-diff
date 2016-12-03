@@ -365,3 +365,17 @@ def construct_table_row(pkg, change, reason):
 
     return '||{}||{}||{}||[[{}|more_info]]'.format(pkg, change, reason,
                                                    more_info_link)
+
+
+def generate_wiki_table(release):
+    """Generate and return the gNewSense Debian Diff table as a string.
+    """
+    pkgs_noreadmes, table_data = get_wiki_page_data(release)
+
+    wiki_table = ''
+    for pkg, fields in table_data.items():
+        change = fields['Change-Type']
+        reason = fields['Changed-From-Debian']
+        wiki_table += construct_table_row(pkg, change, reason) + '\n'
+
+    return pkgs_noreadmes, wiki_table
