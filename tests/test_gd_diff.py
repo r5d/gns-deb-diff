@@ -423,14 +423,14 @@ class TestGdDiff(object):
 
         with mock.patch('os.getenv', new=self.env_func), \
              mock.patch('gd_diff.mk_pkgs_list', new=mock_mk_pkgs_list):
-            pkgs_noreadmes, wiki_page = generate_wiki_table('parkes')
+            pkgs_noreadmes, wiki_table = generate_wiki_table('parkes')
 
             for pkg in pkgs_noreadmes:
                 assert pkg in expected_pkgs_noreadmes
 
             pkgs = set(pkgs) - set(expected_pkgs_noreadmes)
 
-            for row in wiki_page.split('\n')[:-1]:
+            for row in wiki_table.split('\n')[:-1]:
                 cols = row.split('||')[1:]
                 pkg = cols[0]
 
