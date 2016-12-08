@@ -309,7 +309,7 @@ def read_gns_readme(release, pkg):
 
 
 def slurp_fields_from_readme(content):
-    """Returns dict containing fields slurped from `content`
+    """Returns dict containing fields slurped from `content`.
 
     - If a field is not defined or if its value is empty in the
     `content`, then its corresponding value in the dict will be None.
