@@ -19,6 +19,7 @@ from os import path
 from subprocess import run, PIPE
 
 from bs4 import BeautifulSoup
+from pkg_resources import resource_string
 
 _version = '0.1.0dev0'
 
@@ -379,3 +380,9 @@ def generate_wiki_table(release):
         wiki_table += construct_table_row(pkg, change, reason) + '\n'
 
     return pkgs_noreadmes, wiki_table
+
+
+def gns_wiki_header():
+    """Return gNewSense wiki header."""
+    header = resource_string(__name__, 'gd-diff/data/wiki-header.txt')
+    return header.decode()

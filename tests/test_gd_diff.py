@@ -443,6 +443,12 @@ class TestGdDiff(object):
             assert len(pkgs) == 0
 
 
+    def test_gns_wiki_header(self):
+        header = gns_wiki_header()
+        expected_header = open('gd-diff/data/wiki-header.txt', 'r').read()
+        assert header == expected_header
+
+
     def teardown(self):
         """Teardown method for this class."""
         if(path.exists(self.gns_pkgs_dir)):
