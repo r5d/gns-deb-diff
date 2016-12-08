@@ -386,3 +386,12 @@ def gns_wiki_header():
     """Return gNewSense wiki header."""
     header = resource_string(__name__, 'gd-diff/data/wiki-header.txt')
     return header.decode()
+
+
+def generate_wiki_page(release):
+    """Generate and return the gNewSense Debian Diff wiki page.
+    """
+    pkgs_noreadmes, wiki_table = generate_wiki_table(release)
+    wiki_page = gns_wiki_header() + '\n' + wiki_table
+
+    return pkgs_noreadmes, wiki_page

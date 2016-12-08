@@ -449,6 +449,18 @@ class TestGdDiff(object):
         assert header == expected_header
 
 
+    def test_generate_wiki_page(self):
+        def mock_mk_pkgs_list(r):
+            return self.tiny_pkgs_file
+
+        with mock.patch('os.getenv', new=self.env_func), \
+             mock.patch('gd_diff.mk_pkgs_list', new=mock_mk_pkgs_list):
+            pkgs_noreadmes, wiki_page = generate_wiki_page('parkes')
+            pkgs_noreadmes, wiki_table = generate_wiki_table('parkes')
+
+            assert wiki_page == gns_wiki_header() + '\n' + wiki_table
+
+
     def teardown(self):
         """Teardown method for this class."""
         if(path.exists(self.gns_pkgs_dir)):
