@@ -206,15 +206,6 @@ def wiki_page_dir(release):
     return wd_release
 
 
-def write_wiki_page(release, content):
-    """Write wiki page `content` to `release`' last.rev file.
-
-    """
-    wd_release = wiki_page_dir(release)
-    wp_file = os.path.join(wd_release, 'last.rev')
-    write_file(wp_file, content)
-
-
 def configured_p():
     """Returns True if gns-deb-diff is configured; False otherwise.
     """
@@ -395,3 +386,12 @@ def generate_wiki_page(release):
     wiki_page = gns_wiki_header() + '\n' + wiki_table
 
     return pkgs_noreadmes, wiki_page
+
+
+def write_wiki_page(release, content):
+    """Write wiki page `content` to `release`' last.rev file.
+
+    """
+    wd_release = wiki_page_dir(release)
+    wp_file = os.path.join(wd_release, 'last.rev')
+    write_file(wp_file, content)
