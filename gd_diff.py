@@ -384,7 +384,7 @@ def generate_wiki_table(release):
 
 def gns_wiki_header():
     """Return gNewSense wiki header."""
-    header = resource_string(__name__, 'gd-diff/data/wiki-header.txt')
+    header = resource_string(__name__, 'gns_deb_diff/data/wiki-header.txt')
     return header.decode()
 
 

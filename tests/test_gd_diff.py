@@ -445,7 +445,7 @@ class TestGdDiff(object):
 
     def test_gns_wiki_header(self):
         header = gns_wiki_header()
-        expected_header = open('gd-diff/data/wiki-header.txt', 'r').read()
+        expected_header = open('gns_deb_diff/data/wiki-header.txt', 'r').read()
         assert header == expected_header
 
 
