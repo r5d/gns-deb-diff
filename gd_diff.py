@@ -42,7 +42,7 @@ def read_file(fpath):
     try:
         f = open(fpath, 'r')
     except FileNotFoundError as e:
-        print("Error opening '%s' \n Error Info:\n  %r" % (fpath, e),
+        print('Error opening \'{}\' \n Error Info:\n  {}'.format(fpath, e),
               file=sys.stderr)
         sys.exit(1)
 
