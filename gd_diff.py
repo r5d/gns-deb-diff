@@ -21,7 +21,7 @@ from subprocess import run, PIPE
 from bs4 import BeautifulSoup
 from pkg_resources import resource_string
 
-_version = '0.1.0dev0'
+from gns_deb_diff._version import __version__
 
 # list of recognized fields.
 field_list = [
