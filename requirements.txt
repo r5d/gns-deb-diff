@@ -1,0 +1,12 @@
+#
+#### packages needed for gns-deb-diff
+#
+#### package dependencies
+beautifulsoup4
+requests
+#### development dependencies
+coverage
+mock
+nose
+twine
+wheel
