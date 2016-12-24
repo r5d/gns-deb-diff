@@ -22,6 +22,7 @@ from unittest import mock
 from nose.tools import *
 
 from gd_diff import *
+from gns_deb_diff._version import __version__
 
 
 class TestGdDiff(object):
@@ -459,6 +460,24 @@ class TestGdDiff(object):
             pkgs_noreadmes, wiki_table = generate_wiki_table('parkes')
 
             assert wiki_page == gns_wiki_header() + '\n' + wiki_table
+
+
+    def test_get_args_gd_diff_version(self):
+        mock_sys_argv = ['gd-diff', '--version']
+        with mock.patch('sys.stdout', new=StringIO()) as output, \
+             mock.patch('sys.argv', new=mock_sys_argv):
+            try:
+                args = get_args()
+            except SystemExit as se:
+                assert_equal(__version__, output.getvalue().rstrip('\n'))
+
+
+    def test_get_args(self):
+        mock_sys_argv = ['gd-diff', 'parkes', '3']
+        with mock.patch('sys.argv', new=mock_sys_argv):
+            args = get_args()
+            assert args.release == 'parkes'
+            assert args.version == 3
 
 
     def teardown(self):

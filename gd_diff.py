@@ -395,3 +395,13 @@ def write_wiki_page(release, content):
     wd_release = wiki_page_dir(release)
     wp_file = os.path.join(wd_release, 'last.rev')
     write_file(wp_file, content)
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('release', help='gNewSense release name')
+    parser.add_argument('version', help='gNewSense version number',
+                        type=int)
+
+    return parser.parse_args()
