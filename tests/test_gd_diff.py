@@ -437,7 +437,7 @@ class TestGdDiff(object):
 
                 assert pkg in pkgs
                 assert cols[3] == '[[{}|more_info]]'.format(
-                    bzr_pkg_readme_fmt.format(pkg))
+                    readme_link_fmt.format(pkg))
 
                 pkgs.remove(pkg)
 

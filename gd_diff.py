@@ -29,10 +29,16 @@ field_list = [
     'Changed-From-Debian',
 ]
 
-# bzr
-bzr_base_url = 'bzr://bzr.savannah.gnu.org/gnewsense/'
-bzr_pkg_readme_fmt = 'http://bzr.savannah.gnu.org/lh/gnewsense/packages-parkes/{}/annotate/head:/debian/README.gNewSense'
-readme_url_fmt = '%s/packages-{}/{}/debian/README.gNewSense' % bzr_base_url
+# urls
+sv_bzr_http = 'http://bzr.savannah.gnu.org'
+sv_bzr_gns = '/'.join(['bzr://bzr.savannah.gnu.org', 'gnewsense'])
+
+# fmt
+readme_link_fmt = '/'.join([sv_bzr_http, 'lh', 'gnewsense',
+                            'packages-parkes', '{}', 'annotate',
+                            'head:', 'debian', 'README.gNewSense'])
+readme_url_fmt = '/'.join([sv_bzr_gns, 'packages-{}', '{}','debian',
+                           'README.gNewSense'])
 
 
 def read_file(fpath):
@@ -353,7 +359,7 @@ def construct_table_row(pkg, change, reason):
     if reason is None:
         reason = ' '
 
-    more_info_link = bzr_pkg_readme_fmt.format(pkg)
+    more_info_link = readme_link_fmt.format(pkg)
 
     return '||{}||{}||{}||[[{}|more_info]]'.format(pkg, change, reason,
                                                    more_info_link)
