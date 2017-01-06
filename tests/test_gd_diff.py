@@ -179,11 +179,19 @@ class TestGdDiff(object):
             assert_equal(os.path.isdir(wd_parkes), True)
 
 
+    def test_wiki_page_path(self):
+        with mock.patch('os.getenv', new=self.env_func):
+            assert_equal(wiki_page_path('parkes'),
+                         path.join(os.getenv('HOME'), '.config',
+                                             'gns-deb-diff', 'wiki-page',
+                                             'parkes', 'wiki.page'))
+
+
     def test_write_wiki_page(self):
         with mock.patch('os.getenv', new=self.env_func):
             release = 'parkes'
             write_wiki_page(release, 'wiki content')
-            wp_file = os.path.join(wiki_page_dir(release), 'last.rev')
+            wp_file = os.path.join(wiki_page_dir(release), 'wiki.page')
             assert_equal(read_file(wp_file), 'wiki content')
 
 
