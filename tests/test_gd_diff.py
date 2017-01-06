@@ -11,6 +11,10 @@ import json
 import os
 import subprocess
 import sys
+import time
+import xmlrpc.client
+
+import requests
 
 import gd_diff
 
@@ -468,6 +472,47 @@ class TestGdDiff(object):
             pkgs_noreadmes, wiki_table = generate_wiki_table('parkes')
 
             assert wiki_page == gns_wiki_header() + '\n' + wiki_table
+
+
+    def test_push_wiki_page(self):
+        url = 'http://localhost:8080'
+        user = 's'
+        passw = 'gtzarko' # "get the zark out"; if you've been wondering.
+        version = '3'
+        content = 'test zarks! @ {}'.format(time.ctime())
+
+        # ensure moin server is running
+        try:
+            r = requests.get(url)
+            a = ''
+            if(r.status_code != 200):
+                return # skip testing
+        except requests.ConnectionError:
+            return # skip testing
+
+        # test
+        expected_barfs = [
+            'auth success.', 'wiki page updated.',
+            'auth success.', 'wiki page not updated.',
+            'auth failure',
+            'auth failure'
+        ]
+        barfs = []
+        with mock.patch('sys.stdout', new=StringIO()) as output:
+            try:
+                # success
+                push_wiki_page(url, user, passw, version, content)
+                # another success
+                push_wiki_page(url, user, passw, version, content)
+                # auth error
+                push_wiki_page(url, 'z', passw, version, content)
+                # auth error
+                push_wiki_page(url, user, 'zark_out', version, content)
+                barfs = output.getvalue().strip('\n').split('\n')
+            except SystemExit:
+                return # zark it. wiki has disabled xmlrpc.
+
+        assert barfs == expected_barfs
 
 
     def test_get_args_gd_diff_version(self):

@@ -12,11 +12,14 @@ import os
 import re
 import shlex
 import sys
+import xmlrpc.client
 
 import requests
 
 from os import path
 from subprocess import run, PIPE
+from urllib.parse import urljoin
+from xmlrpc.client import ServerProxy, MultiCall, Fault
 
 from bs4 import BeautifulSoup
 from pkg_resources import resource_string
@@ -408,6 +411,52 @@ def write_wiki_page(release, content):
     """
     wp_file = wiki_page_path(release)
     write_file(wp_file, content)
+
+
+def get_wiki_mc(url, user, passwd): # pragma: no cover
+    """Return instance of `xmlprc.client.MultiCall` object.
+
+    """
+    url = urljoin(url, '?action=xmlrpc2')
+    conn = ServerProxy(url, allow_none=True)
+
+    try:
+        token = conn.getAuthToken(user, passwd)
+    except Fault as f:
+        print(f.faultString)
+        exit(1)
+
+    mc = MultiCall(conn)
+    mc.applyAuthToken(token)
+
+    return mc
+
+
+def push_wiki_page(url, user, passwd, version, content):
+    """Push `release`' wiki page to wiki at `uri`.
+
+    """
+    def process_result(r, f=None):
+        if(r == 'SUCCESS'):
+            print('auth success.')
+        elif(r == True):
+            print('wiki page updated.')
+        elif(f and f.faultCode == 'INVALID'):
+            print('auth failure')
+        elif(f and f.faultCode == 1):
+            print('wiki page not updated.')
+
+
+    page = '/'.join(['Documentation', version, 'DifferencesWithDebian'])
+    mc = get_wiki_mc(url, user, passwd)
+    mc.putPage(page, content)
+
+    results = mc()
+    try:
+        for r in results:
+            process_result(r)
+    except Fault as f:
+        result_process(None, f)
 
 
 def get_args():
