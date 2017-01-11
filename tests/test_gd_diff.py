@@ -132,8 +132,9 @@ class TestGdDiff(object):
 
 
     def test_read_config_file_fail(self):
-        config = read_config_file()
-        assert_equal(config, False)
+        with mock.patch('os.getenv', new=self.env_func):
+            config = read_config_file()
+            assert_equal(config, False)
 
 
     def test_read_config_file_success(self):
@@ -309,18 +310,20 @@ class TestGdDiff(object):
 
 
     def test_read_gns_readme(self):
-        # first download the antlr readme
-        saved = slurp_gns_readme('parkes', 'antlr')
-        assert saved
+        with mock.patch('os.getenv', new=self.env_func):
+            # first download the antlr readme
+            saved = slurp_gns_readme('parkes', 'antlr')
+            assert saved
 
-        antlr_readme_content = read_gns_readme('parkes', 'antlr')
-        expected_antlr_readme_content = 'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
-        assert_equal(antlr_readme_content, expected_antlr_readme_content)
+            antlr_readme_content = read_gns_readme('parkes', 'antlr')
+            expected_antlr_readme_content = 'Changed-From-Debian: Removed example with non-free files.\nChange-Type: Modified\n\nFor gNewSense, the non-free unicode.IDENTs files are *actually* removed (see\nalso README.source). See gNewSense bug #34218 for details.\n'
+            assert_equal(antlr_readme_content, expected_antlr_readme_content)
 
 
     def test_read_gns_readme_none(self):
-        readme_content = read_gns_readme('parkes', 'non-existent-pkg')
-        assert_equal(readme_content, None)
+        with mock.patch('os.getenv', new=self.env_func):
+            readme_content = read_gns_readme('parkes', 'non-existent-pkg')
+            assert_equal(readme_content, None)
 
 
     def test_slurp_fields_from_readme(self):
