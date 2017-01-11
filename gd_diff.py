@@ -456,7 +456,24 @@ def push_wiki_page(url, user, passwd, version, content):
         for r in results:
             process_result(r)
     except Fault as f:
-        result_process(None, f)
+        process_result(None, f)
+
+
+def make_push(args):
+    """make wiki page and push it.
+    """
+    release = args.release
+    version = args.version
+    pkgs_noreadmes, wiki_page = generate_wiki_page(release)
+
+    if not configured_p():
+        configure()
+
+    config = read_config_file()
+
+    # write_wiki_page(release, content)
+    # push_wiki_page(url, config['user'], config[pass'], verion, wiki_page)
+
 
 
 def get_args():
@@ -467,3 +484,9 @@ def get_args():
                         type=int)
 
     return parser.parse_args()
+
+
+def main():
+    args = get_args()
+    make_cmd(args)
+
