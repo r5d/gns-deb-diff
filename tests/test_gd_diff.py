@@ -477,6 +477,25 @@ class TestGdDiff(object):
             assert wiki_page == gns_wiki_header() + '\n' + wiki_table
 
 
+    def test_read_wiki_page_returns_none_if_wikipage_nonexistent(self):
+        with mock.patch('os.getenv', new=self.env_func):
+            wiki_page_content = read_wiki_page('bogus-release')
+            assert wiki_page_content == None
+
+
+    def test_read_wiki_page_returns_content_if_wikipage_existent(self):
+        with mock.patch('os.getenv', new=self.env_func):
+            wp_file = wiki_page_path('bogus-release')
+
+            # write some bogus content
+            bogus_content = 'bogus content'
+            with open(wp_file, 'w') as f:
+                f.write(bogus_content)
+
+            wiki_page_content = read_wiki_page('bogus-release')
+            assert wiki_page_content == bogus_content
+
+
     def test_push_wiki_page(self):
         url = 'http://localhost:8080'
         user = 's'

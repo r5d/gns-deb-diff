@@ -405,6 +405,17 @@ def generate_wiki_page(release):
     return pkgs_noreadmes, wiki_page
 
 
+def read_wiki_page(release):
+    """Read wiki page for `release` from disk.
+    """
+    wp_file = wiki_page_path(release)
+
+    if not path.isfile(wp_file):
+        return None
+
+    return read_file(wp_file)
+
+
 def write_wiki_page(release, content):
     """Write wiki page `content` to `release`' last.rev file.
 
