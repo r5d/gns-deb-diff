@@ -537,6 +537,60 @@ class TestGdDiff(object):
         assert barfs == expected_barfs
 
 
+    def test_make_push(self):
+        # mock args
+        mock_sys_argv = ['gd-diff', 'parkes', '3']
+
+        # mock `read_wiki_page` function
+        expected_old_wiki_page = 'wiki content old content.'
+        def mock_rwp(r):
+            return expected_old_wiki_page
+
+        # mock `generate_wiki_page` function
+        expected_wiki_page = 'wiki content.'
+        expected_pkgs_noreadmes = ['noreadmepkg']
+        def mock_gwg(r):
+            return expected_pkgs_noreadmes, expected_wiki_page
+
+        # mock `configured_p` function
+        def mock_cp():
+            return False
+
+        # mock `configure` function
+        def mock_c():
+            return
+
+        # mock `read_config_file`
+        expected_config = {'user': 'usrnm', 'pass': 'weasaspeciesrfckd'}
+        def mock_rcf():
+            return  expected_config
+
+        # mock `write_wiki_page`
+        def mock_wwp(r, wp):
+            return
+
+        # mock `push_wiki_page`
+        def mock_pwp(u, usr, p, v, wp):
+            return
+
+        with mock.patch('os.getenv', new=self.env_func), \
+             mock.patch('gd_diff.read_wiki_page', new=mock_rwp), \
+             mock.patch('gd_diff.generate_wiki_page', new=mock_gwg), \
+             mock.patch('gd_diff.configured_p', new=mock_cp), \
+             mock.patch('gd_diff.configure', new=mock_c), \
+             mock.patch('gd_diff.read_config_file', new=mock_rcf), \
+             mock.patch('gd_diff.write_wiki_page', new=mock_wwp), \
+             mock.patch('gd_diff.push_wiki_page', new=mock_pwp), \
+             mock.patch('sys.argv', new=mock_sys_argv):
+            args = get_args()
+            config, pkgs_noreadmes, old_wiki_page, wiki_page = make_push(args)
+
+            assert expected_config == config
+            assert expected_pkgs_noreadmes == pkgs_noreadmes
+            assert expected_old_wiki_page == old_wiki_page
+            assert expected_wiki_page == wiki_page
+
+
     def test_get_args_gd_diff_version(self):
         mock_sys_argv = ['gd-diff', '--version']
         with mock.patch('sys.stdout', new=StringIO()) as output, \

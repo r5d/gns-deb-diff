@@ -35,6 +35,7 @@ field_list = [
 # urls
 sv_bzr_http = 'http://bzr.savannah.gnu.org'
 sv_bzr_gns = '/'.join(['bzr://bzr.savannah.gnu.org', 'gnewsense'])
+gns_wiki = 'http://gnewsense.org'
 
 # fmt
 readme_link_fmt = '/'.join([sv_bzr_http, 'lh', 'gnewsense',
@@ -475,16 +476,28 @@ def make_push(args):
     """
     release = args.release
     version = args.version
+
+    # read previously generated wiki page for release
+    old_wiki_page = read_wiki_page(release)
+
+    # freshly generate wiki page
     pkgs_noreadmes, wiki_page = generate_wiki_page(release)
 
+    if old_wiki_page == wiki_page:
+        print('no changes.')
+        return
+
+    # configure if needed.
     if not configured_p():
         configure()
 
+    # read configuration.
     config = read_config_file()
 
-    # write_wiki_page(release, content)
-    # push_wiki_page(url, config['user'], config[pass'], verion, wiki_page)
+    write_wiki_page(release, wiki_page)
+    push_wiki_page(gns_wiki, config['user'], config['pass'], version, wiki_page)
 
+    return config, pkgs_noreadmes, old_wiki_page, wiki_page
 
 
 def get_args():
