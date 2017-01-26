@@ -3,14 +3,56 @@ gns-deb-diff
 
 A script that generates differences between gNewSense and Debian.
 
+source
+------
+
+::
+   git clone git://git.ricketyspace.net/gns-deb-diff.git
+
 development environment
 -----------------------
 
 ::
-
    cd gns-deb-diff
    virtualenv --python=python3 .
-   pip install -e '.[dev]'
+   pip install -r requirements.txt
+   python setup develop
+
+config
+------
+
+::
+   {
+       "user": "sddhrth",
+       "pass": "weasaspeciesarenicelyfucked"
+   }
+
+
+config directory structure
+--------------------------
+
+::
+   ~/.config/gns-deb-diff/
+       config  # json format
+       pkgs/
+           parkes # \n seperated list o' pkgs
+           ucclia
+       readmes/
+           parkes/
+               pkg-foo/debian/README.gNewSense
+               pkg-bar/debian/README.gNewSense
+               .
+               .
+           ucclia/
+               pkg-foo/debian/README.gNewSense
+               pkg-bar/debian/README.gNewSense
+               .
+               .
+       wiki-page/
+           parkes/
+               wiki.page # contains latest generated page.
+           ucclia/
+               wiki.page
 
 license
 -------
