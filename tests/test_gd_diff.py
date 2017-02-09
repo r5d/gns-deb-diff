@@ -452,7 +452,7 @@ class TestGdDiff(object):
 
                 assert pkg in pkgs
                 assert cols[3] == '[[{}|more_info]]'.format(
-                    readme_link_fmt.format(pkg))
+                    readme_link_fmt.format('parkes', pkg))
 
                 pkgs.remove(pkg)
 
