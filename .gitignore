@@ -1,6 +1,15 @@
+# general
+*.egg-info/
+build/
+dist/
+*.egg
+*.py[cod]
+__pycache__/
+*.so
 *~
+
+# old cruft
 test
-*.pyc
 src/wiki-files/differences-with-debian.txt
 src/config/
 
@@ -13,11 +22,6 @@ man/
 share/
 man/
 pip-selfcheck.json
-
-# setup.py
-*egg-info/
-build/
-dist/
 
 # coverage
 .coverage
