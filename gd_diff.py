@@ -459,7 +459,7 @@ def push_wiki_page(url, user, passwd, version, content):
             print('wiki page not updated.')
 
 
-    page = '/'.join(['Documentation', version, 'DifferencesWithDebian'])
+    page = '/'.join(['Documentation', str(version), 'DifferencesWithDebian'])
     mc = get_wiki_mc(url, user, passwd)
     mc.putPage(page, content)
 
