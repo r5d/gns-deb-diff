@@ -512,5 +512,5 @@ def get_args():
 
 def main():
     args = get_args()
-    make_cmd(args)
+    make_push(args)
 
