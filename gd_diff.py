@@ -373,7 +373,7 @@ def construct_table_row(release, pkg, change, reason):
 
     more_info_link = readme_link_fmt.format(release, pkg)
 
-    return '||{}||{}||{}||[[{}|more_info]]'.format(pkg, change, reason,
+    return '||{}||{}||{}||[[{}|more_info]]||'.format(pkg, change, reason,
                                                    more_info_link)
 
 
