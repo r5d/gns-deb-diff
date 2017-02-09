@@ -18,6 +18,12 @@ development environment
    pip install -r requirements.txt
    python setup develop
 
+usage
+-----
+
+::
+   gd-diff RELEASE RELEASE_NUMBER
+
 config
 ------
 
