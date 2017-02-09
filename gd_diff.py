@@ -39,7 +39,7 @@ gns_wiki = 'http://gnewsense.org'
 
 # fmt
 readme_link_fmt = '/'.join([sv_bzr_http, 'lh', 'gnewsense',
-                            'packages-parkes', '{}', 'annotate',
+                            'packages-{}', '{}', 'annotate',
                             'head:', 'debian', 'README.gNewSense'])
 readme_url_fmt = '/'.join([sv_bzr_gns, 'packages-{}', '{}','debian',
                            'README.gNewSense'])
@@ -362,7 +362,7 @@ def get_wiki_page_data(release):
     return pkgs_noreadmes, table_data
 
 
-def construct_table_row(pkg, change, reason):
+def construct_table_row(release, pkg, change, reason):
     """Return a table row in moinmoin wiki markup.
 
     """
@@ -371,7 +371,7 @@ def construct_table_row(pkg, change, reason):
     if reason is None:
         reason = ' '
 
-    more_info_link = readme_link_fmt.format(pkg)
+    more_info_link = readme_link_fmt.format(release, pkg)
 
     return '||{}||{}||{}||[[{}|more_info]]'.format(pkg, change, reason,
                                                    more_info_link)
@@ -386,7 +386,7 @@ def generate_wiki_table(release):
     for pkg, fields in table_data.items():
         change = fields['Change-Type']
         reason = fields['Changed-From-Debian']
-        wiki_table += construct_table_row(pkg, change, reason) + '\n'
+        wiki_table += construct_table_row(release, pkg, change, reason) + '\n'
 
     return pkgs_noreadmes, wiki_table
 
