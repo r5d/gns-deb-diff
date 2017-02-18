@@ -31,7 +31,7 @@ config = {
     'author_email': 'rsiddharth@ninthfloor.org',
     'license': 'Public Domain',
     'classifiers': [
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
