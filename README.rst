@@ -7,12 +7,14 @@ source
 ------
 
 ::
+
    git clone git://git.ricketyspace.net/gns-deb-diff.git
 
 development environment
 -----------------------
 
 ::
+
    cd gns-deb-diff
    virtualenv --python=python3 .
    pip install -r requirements.txt
@@ -22,12 +24,14 @@ usage
 -----
 
 ::
+
    gd-diff RELEASE RELEASE_NUMBER
 
 config
 ------
 
 ::
+
    {
        "user": "sddhrth",
        "pass": "weasaspeciesarenicelyfucked"
@@ -38,6 +42,7 @@ config directory structure
 --------------------------
 
 ::
+
    ~/.config/gns-deb-diff/
        config  # json format
        pkgs/
