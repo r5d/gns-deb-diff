@@ -42,7 +42,9 @@ config = {
         'Topic :: Text Processing :: General',
     ],
     'keywords': 'gNewSense Debian documentation',
-    'packages': find_packages(),
+    'py_modules': ['gd_diff'],
+    'packages': ['gns_deb_diff'],
+    'include_package_data': True,
     'install_requires': ['beautifulsoup4', 'requests'],
 }
 
