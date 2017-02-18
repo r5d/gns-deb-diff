@@ -20,6 +20,13 @@ development environment
    pip install -r requirements.txt
    python setup develop
 
+installation
+------------
+
+::
+
+   pip install gns-deb-diff
+
 usage
 -----
 
