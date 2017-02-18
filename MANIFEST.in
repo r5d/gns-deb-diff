@@ -1,0 +1,2 @@
+include COPYING README.rst
+recursive-include gns_deb_diff *.txt
