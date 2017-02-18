@@ -46,6 +46,9 @@ config = {
     'packages': ['gns_deb_diff'],
     'include_package_data': True,
     'install_requires': ['beautifulsoup4', 'requests'],
+    'entry_points': {
+        'console_scripts': ['gd-diff = gd_diff:main']
+    },
 }
 
 setup(**config)
