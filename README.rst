@@ -34,7 +34,7 @@ config
 
    {
        "user": "sddhrth",
-       "pass": "weasaspeciesarenicelyfucked"
+       "pass": "weasaspeciesarenicelyfckd"
    }
 
 
