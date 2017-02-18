@@ -8,5 +8,6 @@ requests
 coverage
 mock
 nose
+restructuredtext_lint
 twine
 wheel
