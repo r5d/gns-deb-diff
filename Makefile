@@ -16,10 +16,10 @@ egg:
 .PHONY: egg
 
 upload:
-	@twine upload -r pypitest -s -i \
+	@twine upload -r pypi -s -i \
 		'1534 126D 8C8E AD29 EDD9  1396 6BE9 3D8B F866 4377' \
 		dist/*.tar.gz
-	@twine upload -r pypitest -s -i \
+	@twine upload -r pypi -s -i \
 		'1534 126D 8C8E AD29 EDD9  1396 6BE9 3D8B F866 4377' \
 		dist/*.whl
 .PHONY: upload
