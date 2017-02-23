@@ -17,6 +17,7 @@ development environment
 
    cd gns-deb-diff
    virtualenv --python=python3 .
+   source activate
    pip install -r requirements.txt
    python setup develop
 
