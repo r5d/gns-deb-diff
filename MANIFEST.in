@@ -1,2 +1,3 @@
 include COPYING README.rst
 recursive-include gns_deb_diff *.txt
+recursive-include tests *.py
