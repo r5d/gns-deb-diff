@@ -19,7 +19,7 @@ import requests
 from os import path
 from subprocess import run, PIPE
 from urllib.parse import urljoin
-from xmlrpc.client import ServerProxy, MultiCall, Fault
+from xmlrpc.client import ServerProxy, MultiCall, Fault, ProtocolError
 
 from bs4 import BeautifulSoup
 from pkg_resources import resource_string
@@ -436,6 +436,9 @@ def get_wiki_mc(url, user, passwd): # pragma: no cover
         token = conn.getAuthToken(user, passwd)
     except Fault as f:
         print(f.faultString)
+        exit(1)
+    except ProtocolError as p:
+        print('Protocal Error: {} {}'.format(p.errcode, p.errmsg))
         exit(1)
 
     mc = MultiCall(conn)
